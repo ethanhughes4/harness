@@ -1,5 +1,6 @@
 {
   "reviewers": [
-    {"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false}
+    {"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false},
+    {"name": "user", "agent": "harness:user-tester", "when": "ui", "browser": true}
   ]
 }
