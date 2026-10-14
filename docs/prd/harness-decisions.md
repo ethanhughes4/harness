@@ -305,3 +305,35 @@ the run continues; it never hangs. (resolver; evidence:
 code.claude.com/docs/en/headless#turn-off-permission-prompts-in-unattended-runs,
 "Anything that would prompt is denied unless a `PermissionRequest` hook
 allows it ... and the run continues.")
+
+D50: An eval run starts in an empty folder and can't read the plugin's
+files, and a disable-model-invocation skill's description isn't in
+context. So an eval for a user-only skill must open its prompt with the
+slash command (e.g. "/harness:init-build notes"); -p expands it in the
+with-plugin arm, and the baseline gets it as plain text. Fixed in
+evals/init-build/prompt.md. evals/questions is unaffected, since it
+dispatches harness:critic by name. (resolver; evidence:
+code.claude.com/docs/en/plugin-evals, "Each run starts in an empty working
+directory"; code.claude.com/docs/en/headless, "Include `/skill-name` in the
+prompt string and Claude Code expands it before running.")
+
+D51: A plugin agent preloads its plugin's skill by the scoped name:
+`skills: [harness:architecture]`. (live check 2026-10-14: `claude -p
+--plugin-dir . --debug-file` logged "[Agent: harness:reviewer] Preloaded
+skill 'harness:architecture'", and the reviewer quoted the skill text
+without tools)
+
+D52: Under `claude -p --agent <plugin agent>`, the agent's tools, model and
+system prompt apply to the main session, and it can start plugin subagents
+by `subagent_type` `harness:<name>`. `Skill` is a valid tool name. maxTurns
+is documented only for subagents and counts agentic turns, so the organiser
+drops it; the /goal clause "or stop after 200 turns" is the bound.
+(resolver; evidence: code.claude.com/docs/en/sub-agents, "Pass `--agent
+<name>` to start a session where the main thread itself takes on that
+subagent's tool restrictions and model"; code.claude.com/docs/en/tools-reference)
+
+D53: /goal works together with --agent under -p. (live check 2026-10-14:
+`claude -p --agent harness:resolver "/goal ... or stop after 3 turns"
+--plugin-dir .` set the goal, the Stop-hook feedback ran a second turn, and
+the run ended with result success; cost $0.11. The docs don't cover the
+combination.)

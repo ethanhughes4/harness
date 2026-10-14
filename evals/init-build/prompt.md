@@ -5,10 +5,13 @@ tags: [init-build]
 expected_outcome: A short spec becomes features with acceptance steps, every passes false, no requirement left out.
 ---
 
-Follow the instructions in skills/init-build/SKILL.md for the stage
-"notes". You cannot write files here, so reply with the feature_list.json
-you would write and nothing else. Assume .claude/harness.json exists and
-feature_list.json does not.
+/harness:init-build notes
+
+You cannot write files here, so reply with the feature_list.json you
+would write and nothing else. Assume .claude/harness.json exists and
+feature_list.json does not. docs/spec.md, docs/decisions.md,
+docs/brief.md and docs/owner.md are not on disk; docs/spec.md is below
+and the others are empty.
 
 docs/spec.md:
 

@@ -6,9 +6,14 @@
 - [Exit 2 blocking](rule_hook_exit2_blocking.md) — PreToolUse blocks, stderr to Claude; Stop continues; SubagentStop stderr to subagent
 - [SubagentStop matcher](rule_subagentstop_matcher.md) — agent type; plugin agents are plugin:agent; colon = unanchored regex, use ^...$
 - [Plugin eval case format](rule_plugin_eval_case_format.md) — prompt.md fields, grader types, --allow-tools, Agent by namespaced name, unscored graders
+- [Eval slash + workspace](rule_eval_slash_and_workspace.md) — eval = claude -p in empty dir; plugin files unreadable; /plugin:skill expanded in -p; baseline gets plain text
 - [/code-review invocation](rule_code_review_skill_invocation.md) — bundled skill, Claude can start it; subagent use of bundled skills not documented
 - [Skill PLUGIN_ROOT](rule_skill_plugin_root_substitution.md) — ${CLAUDE_PLUGIN_ROOT} substituted in plugin skill body + allowed-tools
 - [worktree.baseRef](rule_worktree_baseref.md) — "fresh" (default) or "head"; subagent isolation:worktree follows it
 - [Spawn depth env](rule_subagent_spawn_depth.md) — CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH default 3, positive int only, 1 = no nesting
 - [Project trust](rule_project_trust_allow_rules.md) — project allow rules need trust even under -p; env/hooks don't; defaultMode auto/bypass ignored in project
+- [Agent skills preload](rule_agent_skills_preload.md) — missing name skipped + debug-log warning; bare vs plugin:skill NOT documented
 - [--permission-prompts none](rule_permission_prompts_none.md) — rules/hooks/classifier decide first, rest denied, run continues
+- [--agent main session](rule_agent_main_session.md) — tools/model/prompt apply; Agent spawns subagents, Agent(x) allowlist; maxTurns subagent-only per docs
+- [Skill/Agent tool names](rule_tool_names_skill_agent.md) — exact names valid in tools lists; Skill needed to invoke skills; skills field = preload
+- [/goal under -p](rule_goal_noninteractive.md) — -p "/goal ..." runs to completion; turn bound = clause in condition; with --agent undocumented

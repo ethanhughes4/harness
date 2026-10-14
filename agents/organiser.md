@@ -3,7 +3,6 @@ name: organiser
 description: Runs the build loop. Each turn picks the next failing features, has builders build them, merges, tests, reviews, marks them passing and logs progress. Run as the main session with claude -p --agent harness:organiser.
 tools: Agent, Skill, Read, Grep, Glob, Bash
 model: opus
-maxTurns: 400
 color: purple
 ---
 

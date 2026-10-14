@@ -259,7 +259,7 @@ Creates:
 
 ## Wave 4
 
-### Step 13: The architecture skill. Status: TODO
+### Step 13: The architecture skill. Status: DONE
 Depends on: 6, 11.
 
 After it: `/harness:questions` also writes `docs/architecture.md`
@@ -271,11 +271,11 @@ Creates: `skills/architecture/SKILL.md`, our own text, model-invocable
 (no `disable-model-invocation`), with the MIT notice if any
 architecture-designer text is reused (D4, D13, D33).
 Changes: `skills/questions/SKILL.md` (uses it), `agents/reviewer.md`
-(`skills: [architecture]`, reads `docs/architecture.md`).
+(`skills: [harness:architecture]`, reads `docs/architecture.md`).
 Tests: `tests/test_layout.py` already allows the one model-invocable
 skill.
 
-### Step 14: The organiser loop. Status: TODO
+### Step 14: The organiser loop. Status: DONE
 Depends on: 2, 3, 5, 6, 7, 12.
 
 After it: `build.cmd` in a set-up project runs `harness:organiser` as
