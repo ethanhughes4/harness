@@ -169,3 +169,14 @@ AI approver; `/code-review` in the loop (D45 replaced: the code reviewer
 does it); `board.json` and the HTML dashboard (deferred; the report and
 job folders cover them). Browsing is by Playwright through Bash, not an
 MCP server or Claude in Chrome. (reason: research; cost; headless)
+
+## Added during the build
+
+D80: The tamper check compares `<acceptance_dir>/<id>` against the commit
+named in `.harness/jobs/<id>/acceptance.sha`, which the test writer's step
+writes after committing its tests; without that file, it fails only on
+uncommitted changes there. (builder, step 1; small detail)
+
+D81: build.py treats `building` and `review` features as ready too, so a
+job left half-done by a crashed session is picked up again by the next
+session. (builder, step 1; fits D69 and principle 2)

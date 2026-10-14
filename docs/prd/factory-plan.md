@@ -34,7 +34,7 @@ Tests for this repo: `python -m pytest -q` at the repo root.
 
 ## Wave 1
 
-### Step 1: One feature goes through the line. Status: TODO
+### Step 1: One feature goes through the line. Status: DONE
 Depends on: none.
 
 After it: in a set-up project, `build.cmd` runs `build.py`. Each fresh
