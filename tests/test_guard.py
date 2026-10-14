@@ -75,3 +75,23 @@ def test_reviewer_writes_only_own_review(tmp_path):
         assert run_as(tmp_path, "harness:reviewer", "Edit", file_path=bad).returncode == 2, bad
     # other agents are not limited to review files
     assert run_as(tmp_path, "harness:builder", "Write", file_path="src/a.py").returncode == 0
+
+
+def test_builder_locked_out_of_acceptance(tmp_path):
+    setup(tmp_path)
+    for tool, kw in (("Edit", {"file_path": "tests/acceptance/F1/test_a.py"}),
+                     ("Write", {"file_path": str(tmp_path / "tests" / "acceptance" / "F1" / "t.py")}),
+                     ("Bash", {"command": "echo x > tests\\acceptance\\F1\\t.py"}),
+                     ("Bash", {"command": "rm -r tests/acceptance"})):
+        assert run_as(tmp_path, "harness:builder", tool, **kw).returncode == 2, kw
+    # the test writer, other paths and plain test runs are free
+    assert run_as(tmp_path, "harness:test-writer", "Write", file_path="tests/acceptance/F1/t.py").returncode == 0
+    assert run_as(tmp_path, "harness:builder", "Write", file_path="tests/unit/t.py").returncode == 0
+    assert run_as(tmp_path, "harness:builder", "Bash", command="python -m pytest -q").returncode == 0
+
+
+def test_builder_lock_follows_acceptance_dir(tmp_path):
+    (tmp_path / ".claude").mkdir()
+    (tmp_path / ".claude" / "harness.json").write_text(json.dumps({"acceptance_dir": "e2e"}))
+    assert run_as(tmp_path, "harness:builder", "Write", file_path="e2e/F1/a.spec.js").returncode == 2
+    assert run_as(tmp_path, "harness:builder", "Write", file_path="tests/acceptance/a.py").returncode == 0

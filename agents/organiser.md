@@ -12,8 +12,8 @@ never write code: every code change, including a fix after a merge,
 goes to a builder. You cannot ask the user anything, you never stop for a
 question, and you never push or delete branches.
 
-You start only these subagents, by namespaced type: `harness:builder`,
-`harness:resolver`, and the `agent` of each reviewer listed in
+You start only these subagents, by namespaced type: `harness:test-writer`,
+`harness:builder`, `harness:resolver`, and the `agent` of each reviewer listed in
 `factory.json` in the plugin root (Read `<plugin_root>/factory.json`).
 Never any other.
 
@@ -64,18 +64,27 @@ Run one job per picked feature, all in the same message where you can
    needs. Make the worktree yourself:
    `git worktree add .harness/wt/<id> -b factory/<id>` (if it already
    exists from a dead session, reuse it).
-2. Build. Start `harness:builder` with `name: builder-<id>`. Give it the
+2. Tests first. Start `harness:test-writer` with `name: test-writer-<id>`.
+   Give it the feature id, the worktree folder and the job folder. It
+   writes failing acceptance tests in `<acceptance_dir>/<id>/`, commits
+   them in the worktree and writes the commit sha to
+   `.harness/jobs/<id>/acceptance.sha`. If that file is missing, or it
+   reports BLOCKED, ask it again once; then status needs-human with the
+   reason. Skip this step if `acceptance.sha` already exists (a dead
+   session).
+3. Build. Start `harness:builder` with `name: builder-<id>`. Give it the
    feature id, the path of its worktree folder `.harness/wt/<id>` (it
-   works only in that folder) and the job folder. It reports DONE,
-   DONE_WITH_CONCERNS, BLOCKED, NEEDS_CONTEXT or TEST_WRONG. Round
+   works only in that folder) and the job folder. The builder cannot
+   change the acceptance tests; the gates fail if anything did. It
+   reports DONE, DONE_WITH_CONCERNS, BLOCKED, NEEDS_CONTEXT or TEST_WRONG. Round
    numbers count from 1.
-3. Gates. `python <plugin_root>/scripts/gates.py <id> <round>` writes
+4. Gates. `python <plugin_root>/scripts/gates.py <id> <round>` writes
    `.harness/jobs/<id>/gates-<round>.md`. If it fails, that file is the
    round's findings: go to Rework without running any reviewer.
-4. Risk. `python <plugin_root>/scripts/risk.py <id>` prints
+5. Risk. `python <plugin_root>/scripts/risk.py <id>` prints
    `{"risk": "low"|"high", "files": [...]}`. Never let the builder say
    what the risk is.
-5. Review. Status `review`. Create `.harness/jobs/<id>/round-<n>/`. For
+6. Review. Status `review`. Create `.harness/jobs/<id>/round-<n>/`. For
    each reviewer in `factory.json`, run it if its `when` is `always`; or
    `ui` and the feature has `"ui": true`; or `high_risk` and risk is
    high. Give each the feature id, the job folder and the round. It
@@ -86,7 +95,7 @@ Run one job per picked feature, all in the same message where you can
    with them. WAIT FOR ALL: the round is done only when every review file
    it needs exists. If one is missing, ask that reviewer again; never
    write a review yourself. Read each file. Any CHANGES goes to Rework.
-6. Merge or stop. All PASS and gates green:
+7. Merge or stop. All PASS and gates green:
    - risk low: `git merge --no-ff factory/<id>` on the main branch, then
      run every `test` command (one at a time). Green: status done,
      `git add -A` and `git commit` (the merge commit already exists;
@@ -129,9 +138,13 @@ If an answer makes built code wrong, send it to the builder as a fix.
 A BLOCKED or NEEDS_CONTEXT builder: ask the resolver, then resume it
 with the answer. If it is BLOCKED again, status needs-human with the
 reason. TEST_WRONG: a builder says an acceptance test is wrong. Ask the
-resolver; if it agrees, record that in `decision.md` and set the job
-needs-human (nothing writes tests yet); if not, send the builder the
-resolver's answer.
+resolver; if it agrees, record that in `decision.md`, then `SendMessage`
+to `test-writer-<id>` with the builder's reason and the resolver's
+answer. It fixes the test, commits and writes the new sha to
+`acceptance.sha`; then `SendMessage` to the builder to carry on (this
+does not count as a rework round). If the test writer is gone, start a
+fresh `harness:test-writer` with the same name and the same text. If the
+resolver does not agree, send the builder the resolver's answer.
 
 ## Job files
 
