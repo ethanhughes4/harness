@@ -8,8 +8,8 @@ Start from this idea: $ARGUMENTS
 
 The plugin's absolute folder is: ${CLAUDE_PLUGIN_ROOT}
 
-Call that value PLUGIN_ROOT. If you still see a literal
-`${CLAUDE_PLUGIN_ROOT}` or an empty value, stop and tell the owner; do
+Call that value PLUGIN_ROOT. If it is empty or still starts with a
+dollar sign, stop and tell the owner; do
 not guess a path. Use forward slashes.
 
 You are the owner's single entry (D73). Do the steps below in order by

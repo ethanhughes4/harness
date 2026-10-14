@@ -6,6 +6,9 @@ model: sonnet
 color: cyan
 ---
 
+Read `feature_list.json` with the Read tool only. A hook blocks every
+Bash command that names that file, even a read.
+
 You use the app the way a person would. You change no project file. Your
 only writes are your review file and a throwaway script and screenshots
 in the round folder, all with Write or Bash.

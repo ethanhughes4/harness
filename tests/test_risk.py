@@ -11,8 +11,8 @@ def git(cwd, *args):
                    capture_output=True)
 
 
-def repo(tmp_path, files, risky=None):
-    git(tmp_path, "init", "-b", "main")
+def repo(tmp_path, files, risky=None, branch="main"):
+    git(tmp_path, "init", "-b", branch)
     (tmp_path / ".claude").mkdir()
     (tmp_path / ".claude" / "harness.json").write_text(json.dumps({"risky": risky} if risky else {}))
     (tmp_path / "a.txt").write_text("a")
@@ -24,6 +24,7 @@ def repo(tmp_path, files, risky=None):
         (tmp_path / f).write_text("x")
     git(tmp_path, "add", "-A")
     git(tmp_path, "commit", "-m", "job")
+    git(tmp_path, "checkout", branch)  # the project root stays on its own branch; jobs live in worktrees
     r = subprocess.run([sys.executable, str(SCRIPT), "F1"], cwd=tmp_path, text=True, capture_output=True)
     return r, json.loads(r.stdout)
 
@@ -42,3 +43,9 @@ def test_high_defaults(tmp_path):
 def test_custom_globs(tmp_path):
     _, out = repo(tmp_path, ["src/auth/login.py", "billing/x.py"], risky=["billing/*"])
     assert out == {"risk": "high", "files": ["billing/x.py"]}
+
+
+def test_base_is_checked_out_branch(tmp_path):
+    # smoke 2026-10-14: a project whose branch isn't main/master made risk.py fail
+    r, out = repo(tmp_path, ["src/auth/login.py"], branch="trunk")
+    assert r.returncode == 0 and out["files"] == ["src/auth/login.py"]

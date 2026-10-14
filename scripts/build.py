@@ -53,9 +53,8 @@ def main(argv):
         if not ready(features, limit) or idle >= 2:
             break
         before = json.dumps(features, sort_keys=True)
-        r = subprocess.run(cmd, stdout=subprocess.PIPE)
-        with open("build-log.jsonl", "ab") as log:
-            log.write(r.stdout)
+        with open("build-log.jsonl", "ab") as log:  # streamed, so a killed session keeps its log
+            subprocess.run(cmd, stdout=log)
         features = load()
         idle = idle + 1 if json.dumps(features, sort_keys=True) == before else 0
         print(status_line(features), flush=True)

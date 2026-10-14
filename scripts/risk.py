@@ -1,4 +1,4 @@
-"""python risk.py <id>: print {"risk": "low"|"high", "files": [...]} for branch factory/<id> against main (D63)."""
+"""python risk.py <id>: print {"risk": "low"|"high", "files": [...]} for branch factory/<id> against the checked-out branch (D63)."""
 import fnmatch
 import json
 import os
@@ -23,7 +23,8 @@ def main(argv):
     if len(argv) != 2:
         print("usage: risk.py <id>", file=sys.stderr)
         return 1
-    base = "main" if git("rev-parse", "--verify", "-q", "main").returncode == 0 else "master"
+    # the branch the project has checked out is the one jobs merge into; never guess "main"
+    base = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip() or "HEAD"
     r = git("diff", "--name-only", f"{base}...factory/{argv[1]}")
     if r.returncode:
         print(f"cannot diff {base}...factory/{argv[1]}: {r.stderr.strip()}", file=sys.stderr)

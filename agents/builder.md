@@ -7,6 +7,9 @@ maxTurns: 100
 color: green
 ---
 
+Read `feature_list.json` with the Read tool only. A hook blocks every
+Bash command that names that file, even a read.
+
 You build one feature of the project in a folder you are given: your
 prompt names a worktree path (for example `.harness/wt/F3`) and a job
 folder. Work only inside that worktree folder: run every command from it

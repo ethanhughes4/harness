@@ -9,8 +9,8 @@ Set up this project for the harness. Stack, if given: $ARGUMENTS
 The plugin's absolute folder is: ${CLAUDE_PLUGIN_ROOT}
 
 Call that value PLUGIN_ROOT. Claude Code fills it in before you read
-this text. If you still see a literal `${CLAUDE_PLUGIN_ROOT}` above or
-an empty value, stop and tell the owner; do not guess a path. Write
+this text. If the value above is empty or still starts with a dollar
+sign, stop and tell the owner; do not guess a path. Write
 PLUGIN_ROOT with forward slashes, even on Windows.
 
 Run on its own, write nothing until the owner approves. Run from

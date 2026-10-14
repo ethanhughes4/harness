@@ -14,7 +14,8 @@ write no code.
 1. Read .claude/harness.json. If it is missing, stop and tell the owner
    to run `/harness:setup` first. Note `plugin_root` from it; any plugin
    script you name is run as `python <plugin_root>/scripts/<name>.py`.
-   Never use `${CLAUDE_PLUGIN_ROOT}` in a file you write.
+   In any file you write, give plugin paths exactly as `plugin_root`
+   gives them.
 2. Read docs/spec.md, docs/decisions.md, docs/brief.md and docs/owner.md.
    Use the `## <stage>` heading in docs/spec.md for $ARGUMENTS; if no
    stage is given and there is only one, use it. If the stage is

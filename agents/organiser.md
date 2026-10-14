@@ -21,8 +21,9 @@ Read `.claude/harness.json`: `test` (a list of commands, each a list of
 arguments), `plugin_root`, and the optional keys with these defaults:
 `max_builders` 2, `gates` [], `acceptance_dir` "tests/acceptance",
 `walkthrough_every` 5, `run` none. Scripts run from the project root as
-`python <plugin_root>/scripts/<name>.py`. Never use
-`${CLAUDE_PLUGIN_ROOT}`.
+`python <plugin_root>/scripts/<name>.py`. `plugin_root` is the
+harness plugin's own folder: always use it for the plugin's scripts and
+`factory.json`.
 
 Files: `feature_list.json`, `docs/spec.md`, `docs/decisions.md`,
 `docs/owner.md`, `progress.md`, CLAUDE.md. Read them with Read. A hook
