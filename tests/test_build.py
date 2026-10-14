@@ -55,3 +55,11 @@ def test_nothing_ready(tmp_path):
     r = build(tmp_path)
     assert r.stdout.splitlines()[-1] == "feature_list: 0/2 done, 1 needs-human"
     assert not (tmp_path / "build-log.jsonl").exists()
+
+
+def test_plugin_dir_added_only_when_not_installed():
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+    from build import with_plugin_dir
+    assert with_plugin_dir(["claude"], "  ❯ ponytail@ponytail\n", "C:/h") == ["claude", "--plugin-dir", "C:/h"]
+    assert with_plugin_dir(["claude"], "  ❯ harness@local\n", "C:/h") == ["claude"]
+    assert with_plugin_dir(["claude"], "", None) == ["claude"]

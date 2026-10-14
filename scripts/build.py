@@ -16,6 +16,13 @@ CLAUDE = ["claude", "-p", "--agent", "harness:organiser", "Run the next jobs", "
           "--permission-prompts", "none", "--output-format", "stream-json", "--verbose"]
 
 
+def with_plugin_dir(cmd, plugin_list, plugin_root):
+    """Add --plugin-dir when the harness plugin isn't installed (e.g. while developing it)."""
+    if plugin_root and "harness@" not in plugin_list:
+        return cmd + ["--plugin-dir", plugin_root]
+    return cmd
+
+
 def load():
     with open("feature_list.json", encoding="utf-8") as f:
         return json.load(f)
@@ -40,13 +47,15 @@ def status_line(features):
 
 
 def main(argv):
-    cmd = CLAUDE
+    cfg = config(os.getcwd())
+    listed = subprocess.run(["claude", "plugin", "list"], capture_output=True, text=True, errors="replace")
+    cmd = with_plugin_dir(CLAUDE, listed.stdout or "", (cfg or {}).get("plugin_root"))
     if "--session-cmd" in argv:
         cmd = argv[argv.index("--session-cmd") + 1:]
         if not cmd:
             print("usage: build.py [--session-cmd CMD ARGS...]", file=sys.stderr)
             return 1
-    limit = setting(config(os.getcwd()), "max_builders")
+    limit = setting(cfg, "max_builders")
     idle = 0
     while True:
         features = load()

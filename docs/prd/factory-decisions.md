@@ -207,3 +207,9 @@ on its acceptance tests, now covered in its prompt (D85). Playwright's
 Chromium browser is not downloaded on this PC, so the browser check is
 NOT EXERCISED; builder resume and resolver memory were NOT EXERCISED (no
 rework, no questions).
+
+D87: build.py adds `--plugin-dir <plugin_root>` to each session when
+`claude plugin list` doesn't list harness, so a project can build while the
+plugin is run from its repo rather than installed. Playwright's Chromium was
+downloaded on 2026-10-14; smoke check 7 then passed (a headless subagent
+screenshotted red "SMOKE 42" and read it, $0.38).
