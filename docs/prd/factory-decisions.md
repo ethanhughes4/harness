@@ -237,3 +237,28 @@ only what's open, and redoes the design step if design-system.md is
 missing. (Pocket's first intake stopped before setup.)
 
 D90: ui-ux-pro-max is not used; the owner chose web-design-engineer.
+
+D91: Both design skills are used (owner, replaces D90). ui-ux-pro-max
+(nextlevelbuilder/ui-ux-pro-max-skill, MIT, commit 7246805) is copied into
+`skills/ui-ux-pro-max/` with its data, references and four runtime scripts;
+its SKILL.md paths were changed to `${CLAUDE_SKILL_DIR}/scripts/search.py`
+(see its SOURCE.md). Division of work: web-design-engineer decides the look
+(direction, recipe, colours, type); ui-ux-pro-max supplies usability rules
+(quick-reference priorities, pro-rules checklist, `--domain ux` and
+`--domain chart` searches). Its palette and style picks count only where
+they agree with the recipe: for Pocket its default was glassmorphism with
+#3B82F6, the cliché web-design-engineer warns against. Intake records the
+rules as a "UX rules" section in design-system.md; the builder, visual
+reviewer and user tester invoke it; the visual reviewer blocks on broken
+CRITICAL rules (accessibility, touch targets under 44 px) and the user
+tester on broken CRITICAL or HIGH usability rules. `--persist` is never
+used. Setup allows its search script. Reviewed: SKILL.md and all four
+scripts read in full (stdlib only, no network, no subprocess, reads only
+its data/, writes only with --persist); data greps clean. Live check: a
+subagent invoked it and ran the search, $0.39, no denials.
+
+D92: The owner's user-scope ui-ux-pro-max plugin also loads in every
+session, so the skill appears twice (`ui-ux-pro-max:ui-ux-pro-max` and
+`harness:ui-ux-pro-max`). Harness agents name `harness:ui-ux-pro-max`.
+Disabling the user plugin (`claude plugin disable ui-ux-pro-max`) avoids
+the double description cost (D33); left to the owner.

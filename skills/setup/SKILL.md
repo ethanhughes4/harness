@@ -82,6 +82,7 @@ then show the one-screen summary (see Finishing).
          "Bash(<test command, one rule per command, ending in *>)",
          "Bash(python <PLUGIN_ROOT>/scripts/mark_pass.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/status.py *)",
+         "Bash(python <PLUGIN_ROOT>/skills/ui-ux-pro-max/scripts/search.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/gates.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/risk.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/build.py*)"

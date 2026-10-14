@@ -24,8 +24,15 @@ any question the documents don't answer. Never start any other agent.
 
 ## Features with `"ui": true` (D88)
 
-Before writing any UI, invoke the `harness:web-design-engineer` skill
-with the Skill tool and build to its standard: its design principles,
+Before writing any UI, invoke both design skills with the Skill tool:
+`harness:web-design-engineer` for the look and `harness:ui-ux-pro-max`
+for usability (D91). Follow the "UX rules" in
+`docs/design/design-system.md`, search ui-ux-pro-max (`--domain ux`)
+for the interaction you are building, and run its
+`references/pro-rules.md` checklist before you report DONE. Where the
+two disagree, the design system wins on looks and ui-ux-pro-max wins on
+accessibility and usability. Never pass `--persist`. Build to
+web-design-engineer's standard: its design principles,
 the "Avoid AI-Style Clichés" table, complete states (hover, focus,
 active, disabled, loading, empty, error), and its Pre-delivery
 Checklist before you report DONE. The design is already decided: work

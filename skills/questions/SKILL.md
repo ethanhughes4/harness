@@ -108,9 +108,20 @@ Settled answers go into these files, each with one heading per stage
      Clichés" table or `references/failure-patterns.md`. Before showing
      it, run its 5-dimension critique on it yourself and fix anything
      under 7. The owner approves or asks for changes (its Checkpoint 2).
+  Use both design skills (D91): web-design-engineer decides the look
+  (direction, recipe, colours, type); `harness:ui-ux-pro-max` supplies
+  the usability rules. Before step 3, run its search for the app's UX
+  concerns (`--domain ux` for the main interactions such as forms,
+  navigation and feedback; `--domain chart` for any chart) and read its
+  `references/quick-reference.md` priorities 1 to 9. Take its palette or
+  style picks only where they agree with the chosen recipe; never pass
+  `--persist`. Check the mockup against its
+  `references/pro-rules.md` pre-delivery checklist as well as the
+  critique.
   Then write docs/design/design-system.md (Design Read, dials, recipe
-  name, the Design Decisions block, the signature moves and the
-  recipe's "avoid" list) and docs/design/tokens.md (every colour, font,
+  name, the Design Decisions block, the signature moves, the recipe's
+  "avoid" list, and a "UX rules" section: the ui-ux-pro-max rules this
+  app must meet, by priority, each one line) and docs/design/tokens.md (every colour, font,
   size, spacing, radius, shadow and motion value, one per line, as CSS
   custom property names and values). Builders and the visual reviewer
   work only from these two files and the mockup. If the app must work

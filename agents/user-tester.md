@@ -1,7 +1,7 @@
 ---
 name: user-tester
 description: Uses the running app in a real browser like a person, for one UI feature or the whole app, and writes its review file. Drives Playwright through Bash; no MCP browser tools.
-tools: Read, Write, Bash, Glob, Grep
+tools: Read, Write, Bash, Glob, Grep, Skill
 model: sonnet
 color: cyan
 ---
@@ -46,6 +46,11 @@ with `"ui": true` and status done.
    folder (`step-<k>.png`).
 4. Read the screenshots with Read and check what a user would see: the
    expected result is visible, no error text, nothing blank or broken.
+   Invoke the `harness:ui-ux-pro-max` skill and judge the behaviour
+   against its usability rules for what this feature does (forms and
+   feedback, navigation, touch, keyboard; its
+   `references/quick-reference.md`) and the "UX rules" in
+   `docs/design/design-system.md` (D91). Never pass `--persist`.
 5. Always stop the app afterwards, also when a step failed (kill the
    process tree you started; check the port is free).
 
@@ -60,4 +65,8 @@ to reproduce:
 In walkthrough mode, start each finding with the feature id. Anything you
 cannot back that way is a note under `Notes:`. Taste and styling are not
 your job (the visual reviewer does that); only broken behaviour, errors,
-and things a user could not do. Reply with the verdict line only.
+and things a user could not do. A broken CRITICAL or HIGH usability
+rule counts as something a user could not do (for example no keyboard
+access, no feedback after an action, an error shown only at the top of
+a long form, a back button that loses work). Reply with the verdict
+line only.

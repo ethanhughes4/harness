@@ -220,4 +220,4 @@ Where the code differs from D58 to D81, this doc follows the code.
 4. **The acceptance lock** is a substring match on the folder name in Bash commands, so it can block more than it needs to. The same is true of `risk.py`: `*auth*` matches any path containing "auth" (for example `author.md`), so it can flag more files as high risk than intended. Both are marked `ponytail:` in the code.
 5. **`test_limit_s`** (default 300) is a setting the decisions do not list; gates and the Stop hook kill a command that runs longer.
 6. **The UI cost of about $3.40** is not in the research report. It is the report's $2.90 plus about $0.50 for the two browser reviewers, our own figure.
-7. **Design skill:** the `web-design-engineer` skill (D88) is used by the intake's design step, the builder on UI features and the visual reviewer. ui-ux-pro-max is not used (D90).
+7. **Design skills:** `web-design-engineer` (D88) decides the look and `ui-ux-pro-max` (D91) supplies usability rules. Both are used by the intake's design step, the builder on UI features and the visual reviewer; the user tester uses ui-ux-pro-max.

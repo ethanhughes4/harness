@@ -41,7 +41,9 @@ feature id.
 3. Invoke the `harness:web-design-engineer` skill with the Skill tool
    and read its `references/critique-guide.md` and
    `references/failure-patterns.md`, plus the one style recipe named in
-   `docs/design/design-system.md` (D88). Read `docs/design/mockup.html`,
+   `docs/design/design-system.md` (D88). Also invoke
+   `harness:ui-ux-pro-max` and read its `references/quick-reference.md`
+   and `references/pro-rules.md` (D91). Read `docs/design/mockup.html`,
    `docs/design/tokens.md` and `docs/design/design-system.md` if they
    exist. Without them, judge only layout, contrast, states and axe, and
    say in Notes that there was no mockup or tokens to compare against.
@@ -77,6 +79,9 @@ The first line is exactly `VERDICT: PASS` or `VERDICT: CHANGES`. Block
 - colours, fonts or spacing not from the tokens
 - failed contrast, or serious or critical axe violations
 - missing focus or loading states
+- a broken CRITICAL rule from ui-ux-pro-max (accessibility, or touch
+  targets under 44 by 44 px at 390 px wide), or a broken "UX rules"
+  line in `docs/design/design-system.md`
 - a clear mismatch with the approved mockup
 - an AI cliché from the skill's "Avoid AI-Style Clichés" table or
   `references/failure-patterns.md` that `docs/design/design-system.md`

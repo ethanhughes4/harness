@@ -31,7 +31,7 @@ def test_agents_use_no_ignored_fields():
 
 
 # Skills agents preload or invoke must be model-invocable (D4); every other skill is user-only.
-MODEL_INVOCABLE = {"architecture", "web-design-engineer"}
+MODEL_INVOCABLE = {"architecture", "web-design-engineer", "ui-ux-pro-max"}
 
 
 def test_skills_not_model_invocable_except_preloaded():
