@@ -30,9 +30,13 @@ def test_agents_use_no_ignored_fields():
             assert key not in frontmatter(p), (p, key)
 
 
-def test_skills_not_model_invocable_except_architecture():
+# Skills agents preload or invoke must be model-invocable (D4); every other skill is user-only.
+MODEL_INVOCABLE = {"architecture", "web-design-engineer"}
+
+
+def test_skills_not_model_invocable_except_preloaded():
     for p in SKILLS:
-        if p.parent.name != "architecture":
+        if p.parent.name not in MODEL_INVOCABLE:
             assert frontmatter(p).get("disable-model-invocation", "").strip() == "true", p
 
 

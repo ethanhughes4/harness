@@ -22,6 +22,12 @@ If `feature_list.json` exists, this is an existing project: do the
 same steps for ONE feature or stage only (the idea), skip the first
 setup, and append to the list; never change an existing feature.
 
+If `docs/spec.md` exists but `feature_list.json` does not, an earlier
+intake stopped partway: resume it. Keep what docs/brief.md, docs/spec.md
+and docs/decisions.md already settle and ask only what they leave open;
+redo the design step if `docs/design/design-system.md` is missing; then
+carry on with setup and the rest.
+
 1. owner: follow `skills/owner/SKILL.md`. If
    `~/.claude/harness/owner.md` is missing, it interviews the owner;
    otherwise copy it silently to `docs/owner.md`.
@@ -32,10 +38,11 @@ setup, and append to the list; never change an existing feature.
    critic checks the TECHNICAL answers first. Decide the architecture
    yourself, without questions, and record it as D-numbered decisions
    (use `skills/architecture/SKILL.md`). Write docs/brief.md,
-   docs/spec.md and docs/decisions.md. For a UI app also write
-   docs/design/mockup.html and docs/design/tokens.md and ask the owner
-   to approve them once. This is the only owner stop besides the
-   questions themselves.
+   docs/spec.md and docs/decisions.md. For a UI app also make the
+   design exactly as the questions skill's UI step says (directions,
+   then the confirmed system, then the approved mockup, using the
+   `harness:web-design-engineer` skill). These are the only owner stops
+   besides the questions themselves.
 3. setup: follow `skills/setup/SKILL.md`, run from new: no separate
    review stop, only its one-screen summary (and the Playwright yes or
    no for a UI app).

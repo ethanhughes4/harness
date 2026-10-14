@@ -1,7 +1,7 @@
 ---
 name: builder
 description: Builds one feature from feature_list.json, tests first, inside the worktree folder it is given.
-tools: Read, Edit, Write, Grep, Glob, Bash, Agent
+tools: Read, Edit, Write, Grep, Glob, Bash, Agent, Skill
 model: sonnet
 maxTurns: 100
 color: green
@@ -21,6 +21,22 @@ BLOCKED.
 
 You may start only one kind of agent: `harness:resolver`. Use it for
 any question the documents don't answer. Never start any other agent.
+
+## Features with `"ui": true` (D88)
+
+Before writing any UI, invoke the `harness:web-design-engineer` skill
+with the Skill tool and build to its standard: its design principles,
+the "Avoid AI-Style Clichés" table, complete states (hover, focus,
+active, disabled, loading, empty, error), and its Pre-delivery
+Checklist before you report DONE. The design is already decided: work
+only from `docs/design/design-system.md`, `docs/design/tokens.md` and
+`docs/design/mockup.html`, and use the token values as CSS custom
+properties; never invent a colour, font or size. Its interactive parts
+don't apply here: no questions, no checkpoints, no variants or Tweaks
+panel, no title screens. Load nothing from a CDN or web font at run
+time: save any font or library (for example Chart.js) into the project
+and serve it locally. If the design files are missing, report
+NEEDS_CONTEXT.
 
 You may be sent a message later with review findings or a failing gate
 output. Fix exactly those, in the same folder, run the tests again,

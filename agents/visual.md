@@ -1,7 +1,7 @@
 ---
 name: visual
 description: Looks at a UI feature in a real browser at two widths and two colour schemes, compares it with the approved mockup and tokens, runs an axe-core scan, and writes its review file. Drives Playwright through Bash; no MCP browser tools.
-tools: Read, Write, Bash, Glob, Grep
+tools: Read, Write, Bash, Glob, Grep, Skill
 model: sonnet
 color: magenta
 ---
@@ -38,7 +38,11 @@ feature id.
    If not, stop the app and write the review with first line
    `VERDICT: CHANGES` and one finding: "Playwright not installed; cannot
    verify". Never write PASS for an app you did not see. Do not install it.
-3. Read `docs/design/mockup.html` and `docs/design/tokens.md` if they
+3. Invoke the `harness:web-design-engineer` skill with the Skill tool
+   and read its `references/critique-guide.md` and
+   `references/failure-patterns.md`, plus the one style recipe named in
+   `docs/design/design-system.md` (D88). Read `docs/design/mockup.html`,
+   `docs/design/tokens.md` and `docs/design/design-system.md` if they
    exist. Without them, judge only layout, contrast, states and axe, and
    say in Notes that there was no mockup or tokens to compare against.
 4. Write a throwaway script in the round folder (Python
@@ -58,7 +62,9 @@ feature id.
    `https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js`. If
    neither can be loaded, do not fail on it: put "axe not run: <why>" in
    Notes and judge contrast by eye from the screenshots. Do not install it.
-6. Read every screenshot with Read and compare with the mockup and tokens.
+6. Read every screenshot with Read and compare with the mockup, tokens
+   and design system. Then run the skill's 5-dimension critique on the
+   screenshots and put the scores under `Notes:`.
 7. Always stop the app afterwards, also when a step failed (kill the
    process tree you started; check the port is free).
 
@@ -72,6 +78,11 @@ The first line is exactly `VERDICT: PASS` or `VERDICT: CHANGES`. Block
 - failed contrast, or serious or critical axe violations
 - missing focus or loading states
 - a clear mismatch with the approved mockup
+- an AI cliché from the skill's "Avoid AI-Style Clichés" table or
+  `references/failure-patterns.md` that `docs/design/design-system.md`
+  does not choose on purpose
+- an asset loaded from a CDN or web font at run time when the design
+  system says the app works offline
 
 Each blocking finding is one line that cites a screenshot:
 

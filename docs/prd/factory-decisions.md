@@ -213,3 +213,27 @@ D87: build.py adds `--plugin-dir <plugin_root>` to each session when
 plugin is run from its repo rather than installed. Playwright's Chromium was
 downloaded on 2026-10-14; smoke check 7 then passed (a headless subagent
 screenshotted red "SMOKE 42" and read it, $0.38).
+
+## Design layer (2026-10-14)
+
+D88: The design layer is the third-party `web-design-engineer` skill
+(ConardLi/garden-skills, MIT, commit 7a6d5a7, v1.3.0), copied unchanged
+into `skills/web-design-engineer/` with its licence and a SOURCE.md
+(D33). It is model-invocable so agents can load it (D4). The intake's UI
+step follows it: 3 directions from different schools, the owner picks;
+a Design Read with five dials and a recipe's concrete values, the owner
+confirms; a v0 mockup self-critiqued, the owner approves. It writes
+docs/design/design-system.md and tokens.md. The builder invokes it for
+`ui: true` features and builds only from those files, with none of the
+skill's interactive parts and nothing loaded from a CDN at run time. The
+visual reviewer invokes it, uses its critique and failure patterns, and
+also blocks on a listed AI cliché the design system doesn't choose.
+(owner chose this skill; live check: a subagent invoked it via the Skill
+tool and quoted it, $0.42) This replaces the deferral in D13 for design.
+
+D89: `/harness:new` resumes a half-finished intake: when docs/spec.md
+exists but feature_list.json doesn't, it keeps what the docs settle, asks
+only what's open, and redoes the design step if design-system.md is
+missing. (Pocket's first intake stopped before setup.)
+
+D90: ui-ux-pro-max is not used; the owner chose web-design-engineer.

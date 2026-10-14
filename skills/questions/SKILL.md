@@ -91,10 +91,32 @@ Settled answers go into these files, each with one heading per stage
   headings in this order and no others: `## Problem`, `## User`,
   `## Must never` (one short concrete bullet per item), `## Out of
   scope`. scripts/reinject.py re-reads "Must never" after compaction.
-- UI app only: docs/design/mockup.html (one self-contained page showing
-  the main screens) and docs/design/tokens.md (colours, fonts, spacing,
-  one line each). Ask the owner to approve the mockup once; change it
-  only on their reply.
+- UI app only: the design, made with the `harness:web-design-engineer`
+  skill (use the Skill tool; D88). Follow its workflow with these stops:
+  1. Directions: unless the owner named a style, run its Design
+     Direction Advisor: 3 directions from 3 different schools, each
+     with its named anchor, why it fits, and signature cues. Recommend
+     one. The owner picks (or names their own).
+  2. System: read the one matching file in its
+     `references/style-recipes/`, write the Design Read with the five
+     dials (its `references/design-calibration.md`) and the Design
+     Decisions block with the recipe's concrete values. Show it; the
+     owner confirms (its Checkpoint 1).
+  3. v0: docs/design/mockup.html, one self-contained page with the main
+     screens in that system, real states (empty, error, loading) where
+     they matter, and none of the clichés in its "Avoid AI-Style
+     Clichés" table or `references/failure-patterns.md`. Before showing
+     it, run its 5-dimension critique on it yourself and fix anything
+     under 7. The owner approves or asks for changes (its Checkpoint 2).
+  Then write docs/design/design-system.md (Design Read, dials, recipe
+  name, the Design Decisions block, the signature moves and the
+  recipe's "avoid" list) and docs/design/tokens.md (every colour, font,
+  size, spacing, radius, shadow and motion value, one per line, as CSS
+  custom property names and values). Builders and the visual reviewer
+  work only from these two files and the mockup. If the app must work
+  offline, the design may not depend on a CDN or web font at run time:
+  note in design-system.md that fonts and chart libraries are saved
+  into the project.
 
 ## Finishing
 
