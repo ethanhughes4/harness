@@ -337,3 +337,9 @@ D53: /goal works together with --agent under -p. (live check 2026-10-14:
 --plugin-dir .` set the goal, the Stop-hook feedback ran a second turn, and
 the run ended with result success; cost $0.11. The docs don't cover the
 combination.)
+
+D54: /harness:smoke runs in a temporary git worktree of the project on a
+throwaway branch, not a clone, so it shares the main checkout's workspace
+trust (D48) and tests the project's real settings. Afterwards it removes
+the worktree and deletes the branch. This replaces "clone" in D28; the
+rest of D28 stands. (owner, 2026-10-14)

@@ -309,12 +309,12 @@ Tests: covered by `tests/test_layout.py`; proved end to end by step 15.
 ### Step 15: `/harness:smoke`. Status: TODO
 Depends on: 7, 10, 12, 14.
 
-After it: `/harness:smoke` clones the project to a temp folder, loads a
+After it: `/harness:smoke` makes a temporary git worktree of the project on a throwaway branch (D54), loads a
 fixed two-feature mini-spec, runs the headless build, and reports
 pass or fail for each check: the guard blocks a deleted feature,
 `permission_denials` in the stream output is empty, a killed run
 resumes on rerun, and `.claude/agent-memory/resolver/` was written.
-The clone is deleted afterwards.
+The worktree is removed and the branch deleted afterwards.
 
 Creates:
 - `skills/smoke/SKILL.md` and its mini-spec files beside it; it runs
@@ -342,7 +342,7 @@ D1 s1,2,5 · D2 all agent and skill steps · D3 s10 · D4 s1,13 · D5 s14
 s3,14 · D18 s4 · D19 s1 · D20 s12,14 · D21 s6,14 · D22 s5,7,14,16 · D23
 s14 · D24 s14 · D25 s1,3,12 · D26 s12,15 · D27 s1–4,7,11,12 · D28 s15 ·
 D29 s1,11 · D30 s7,15 · D31 s9 · D32 s1,5,8,9,14 · D33 s13,14 (part)
-· D34 done before the build (f747e5c) · D35 s10,12,14,15 · D36 s5 · D44 s7 · D45 s6,14
+· D34 done before the build (f747e5c) · D35 s10,12,14,15 · D36 s5 · D44 s7 · D45 s6,14 · D46–D53 recorded during the build · D54 s15
 
 ## UNCOVERED
 
