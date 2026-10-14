@@ -211,3 +211,24 @@ text is unconfirmed)
 D36: The builder's instructions say it may start only harness:resolver,
 because an Agent(...) allow-list in a subagent's tools is ignored.
 (reason: owner)
+
+## Added by the resolver during the build
+
+D37: StopFailure hooks receive `error`, optional `error_details` and
+optional `last_assistant_message`, plus the common `cwd`; the matcher
+filters on the error type. (resolver; evidence: code.claude.com/docs/en/hooks,
+"StopFailure hooks receive `error`, optional `error_details`, and optional
+`last_assistant_message`. The `error` field identifies the error type and is
+used for matcher filtering.")
+
+D38: Plugin hooks/hooks.json uses {"hooks": {"<Event>": [{"hooks": [...]}]}};
+a command hook with `args` runs in exec form, `command` found on PATH, and
+${CLAUDE_PLUGIN_ROOT} is substituted into `command` and each `args` element.
+So `python` must be on PATH on the build machine. (resolver; evidence:
+code.claude.com/docs/en/hooks, "path placeholders like `${CLAUDE_PLUGIN_ROOT}`
+are substituted into `command` and into each `args` element as plain strings.")
+
+D39: A plugin skill without `name` takes its folder name, run as
+/<plugin>:<folder>. (resolver; evidence: code.claude.com/docs/en/skills,
+`name`: "Defaults to the directory name."; plugin skills run "as
+`/plugin-name:skill-name`")

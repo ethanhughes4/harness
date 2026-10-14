@@ -1,0 +1,3 @@
+- [StopFailure input](rule_stopfailure_input.md) — fields error/error_details/last_assistant_message + common cwd; matcher = error type
+- [Hook exec form](rule_hook_exec_form.md) — hooks.json wrapper; command+args exec form; ${CLAUDE_PLUGIN_ROOT} expands in args
+- [Plugin skill name](rule_plugin_skill_name.md) — name defaults to folder; plugin skills run as /plugin:skill

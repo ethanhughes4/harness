@@ -41,7 +41,7 @@ Tests for this repo: `python -m pytest -q` at the repo root.
 
 ## Wave 1
 
-### Step 1: The plugin loads and `/harness:questions` runs. Status: TODO
+### Step 1: The plugin loads and `/harness:questions` runs. Status: DONE
 Depends on: none.
 
 After it: `claude --plugin-dir .` loads the plugin; `/harness:questions
