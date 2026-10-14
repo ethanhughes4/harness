@@ -214,11 +214,10 @@ A per-feature spec-writer (the intake and the test writer cover it); a fixed fou
 
 Where the code differs from D58 to D81, this doc follows the code.
 
-1. **`/harness:new` and the new smoke are not in the code this doc was written against.** Steps 8 and 9 of the plan were built in parallel. The `new` and smoke sections above follow D73 to D75 and the step 8 and 9 descriptions; the `brief` skill and the old smoke skill were still present when this was written. Check them after those steps merge.
-2. **The guard's `status.py` pattern** accepts any lowercase status word. `status.py` itself rejects a value that is not one of the six statuses.
-3. **Round 1 rework** sends "think harder" as text in the message. The research report suggests a higher effort setting; no effort setting is passed.
-4. **The tamper check** (D80) also fails on uncommitted changes in the acceptance folder, even when `acceptance.sha` exists.
-5. **The acceptance lock** is a substring match on the folder name in Bash commands, so it can block more than it needs to. The same is true of `risk.py`: `*auth*` matches any path containing "auth" (for example `author.md`), so it can flag more files as high risk than intended. Both are marked `ponytail:` in the code.
-6. **`test_limit_s`** (default 300) is a setting the decisions do not list; gates and the Stop hook kill a command that runs longer.
-7. **The UI cost of about $3.40** is not in the research report. It is the report's $2.90 plus about $0.50 for the two browser reviewers, our own figure.
-8. **Specialist design skills** (`frontend-design`, `ui-ux-pro-max`) from the old design are not preloaded into any agent in the code. Only `architecture` is, in the code reviewer.
+1. **The guard's `status.py` pattern** accepts any lowercase status word. `status.py` itself rejects a value that is not one of the six statuses.
+2. **Round 1 rework** sends "think harder" as text in the message. The research report suggests a higher effort setting; no effort setting is passed.
+3. **The tamper check** (D80) also fails on uncommitted changes in the acceptance folder, even when `acceptance.sha` exists.
+4. **The acceptance lock** is a substring match on the folder name in Bash commands, so it can block more than it needs to. The same is true of `risk.py`: `*auth*` matches any path containing "auth" (for example `author.md`), so it can flag more files as high risk than intended. Both are marked `ponytail:` in the code.
+5. **`test_limit_s`** (default 300) is a setting the decisions do not list; gates and the Stop hook kill a command that runs longer.
+6. **The UI cost of about $3.40** is not in the research report. It is the report's $2.90 plus about $0.50 for the two browser reviewers, our own figure.
+7. **Specialist design skills** (`frontend-design`, `ui-ux-pro-max`) from the old design are not preloaded into any agent in the code. Only `architecture` is, in the code reviewer.

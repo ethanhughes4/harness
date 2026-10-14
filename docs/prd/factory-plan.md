@@ -139,7 +139,7 @@ Changes: `skills/report/SKILL.md` (D77).
 
 ## Wave 3
 
-### Step 8: One command to start. Status: TODO
+### Step 8: One command to start. Status: DONE
 Depends on: 1, 2, 4, 5.
 
 After it: `/harness:new "<idea>"` asks one list of at most 15 questions,
@@ -153,7 +153,7 @@ Playwright, one-screen summary, no separate review stop when run from
 `new`), `skills/owner/SKILL.md` (only when no master exists).
 Deletes: `skills/brief/` (D73).
 
-### Step 9: Smoke tests the plugin. Status: TODO
+### Step 9: Smoke tests the plugin. Status: DONE
 Depends on: 1, 4.
 
 After it: `/harness:smoke` proves the line on a mini-spec, plus a
@@ -163,7 +163,7 @@ still in its worktree.
 Changes: `skills/smoke/SKILL.md`, `skills/smoke/feature_list.json`,
 `skills/smoke/spec.md` (D75).
 
-### Step 10: The design doc matches the factory. Status: TODO
+### Step 10: The design doc matches the factory. Status: DONE
 Depends on: 1.
 
 After it: `docs/design.md` describes the factory as built.
