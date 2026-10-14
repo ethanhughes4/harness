@@ -343,3 +343,23 @@ throwaway branch, not a clone, so it shares the main checkout's workspace
 trust (D48) and tests the project's real settings. Afterwards it removes
 the worktree and deletes the branch. This replaces "clone" in D28; the
 rest of D28 stands. (owner, 2026-10-14)
+
+## Factory research (2026-10-14)
+
+D55: Under `claude -p`, a subagent spawned with a `name` can be resumed with
+SendMessage. It keeps its full history, and the headless session waits for
+the resumed agent's reply before ending. The stream may emit more than one
+`result` message. (live check 2026-10-14: named haiku agent told
+"PELICAN", resumed by SendMessage, replied PELICAN; $0.12. docs/en/sub-agents:
+"Claude uses the `SendMessage` tool with the agent's ID or name as the `to`
+field to resume it." "Resumed subagents retain their full conversation history")
+
+D56: PreToolUse input carries `agent_id` and `agent_type` when the call
+comes from a subagent, so the guard can tell which agent is writing.
+(docs/en/hooks: "tool events such as `PreToolUse` ... carries the `agent_id`
+and `agent_type` common input fields that identify the subagent.")
+
+D57: Background subagents keep Read, Grep, Glob, Bash, Edit, Write, Skill,
+SendMessage, WebFetch and WebSearch. The docs don't say whether a resumed
+`isolation: worktree` agent keeps its worktree. (docs/en/sub-agents,
+"Available tools")
