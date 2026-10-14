@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Checks one merged diff against docs/spec.md and docs/decisions.md first, then quality. Read-only. Reports only gaps that affect correctness or the spec.
-tools: Read, Grep, Glob, Bash, Skill
+tools: Read, Grep, Glob, Bash
 model: opus
 color: orange
 ---
@@ -28,10 +28,8 @@ Check in this order:
 5. Rules. No rule in CLAUDE.md or `.claude/rules/` is broken. A rules
    file with `paths:` in its frontmatter applies only to those paths.
 6. Quality, only after 1 to 5: bugs, missing error handling at inputs,
-   unsafe code. Try the Skill tool with `code-review` and the diff range
-   as its target (never `--fix` or `--comment`, which write). If the
-   skill is not available to you, skip it and say so on a line
-   `code-review: not available`. Report only what you confirm.
+   unsafe code. Report only what you confirm. (The organiser runs
+   /code-review on the same range separately; D45.)
 
 Report only gaps that make the code wrong or miss the spec. No style
 comments, no suggestions. One line each:

@@ -166,11 +166,11 @@ Depends on: 1.
 
 After it: `harness:reviewer` checks a merged diff against
 `docs/spec.md` and `docs/decisions.md` first, then quality, read-only,
-and can run `/code-review` on the diff.
+and reports only real gaps. The organiser runs `/code-review` (D45).
 
 Creates: `agents/reviewer.md`, from `.claude/agents/reviewer.md`, made
 general to features and the spec instead of plan steps (D2, D21 step
-4, D33 `/code-review`).
+4, D45).
 
 Tests: covered by `tests/test_layout.py`.
 
@@ -288,6 +288,8 @@ rewritten for the loop:
   `max_builders`, skipping `owner-writes` (D21, D32)
 - runs the tests itself after each merge, not relying on Stop-hook
   loops (D6, D21)
+- `/code-review` on the merged range through the Skill tool (Skill in
+  its tools), alongside the reviewer (D33, D45)
 - reviewer, then any eval in the acceptance steps with its decision
   rule, then `python <plugin_root>/scripts/mark_pass.py <id>` and a
   commit, then a `progress.md` entry (D17, D21, D35)
@@ -339,8 +341,8 @@ D1 s1,2,5 · D2 all agent and skill steps · D3 s10 · D4 s1,13 · D5 s14
 (push by owner) · D13 s13 · D14 s1–4,10 · D15 s1,2,10 · D16 s1–4 · D17
 s3,14 · D18 s4 · D19 s1 · D20 s12,14 · D21 s6,14 · D22 s5,7,14,16 · D23
 s14 · D24 s14 · D25 s1,3,12 · D26 s12,15 · D27 s1–4,7,11,12 · D28 s15 ·
-D29 s1,11 · D30 s7,15 · D31 s9 · D32 s1,5,8,9,14 · D33 s6,13 (part)
-· D34 done before the build (f747e5c) · D35 s10,12,14,15 · D36 s5
+D29 s1,11 · D30 s7,15 · D31 s9 · D32 s1,5,8,9,14 · D33 s13,14 (part)
+· D34 done before the build (f747e5c) · D35 s10,12,14,15 · D36 s5 · D44 s7 · D45 s6,14
 
 ## UNCOVERED
 

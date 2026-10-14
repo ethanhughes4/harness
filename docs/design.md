@@ -110,7 +110,7 @@ General agents produce generic work, so the harness preloads specialist skills i
 | Visual direction | `frontend-design` | [Anthropic](https://claudemarketplaces.com/skills/anthropics/claude-code/frontend-design) | Questions phase, ui-builder | A committed aesthetic: type, colour system, motion; no default fonts or purple gradients |
 | UX and accessibility | `ui-ux-pro-max` | [Community](https://claudemarketplaces.com/skills/nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max) | ui-builder, ui-reviewer | Palettes and font pairings; checks for contrast, focus states, touch targets, loading states |
 | System design | `architecture` (our own, based on [architecture-designer](https://tessl.io/registry/skills/github/jeffallan/claude-skills/architecture-designer)) | Ours | Questions phase, reviewer | `docs/architecture.md`: requirements, non-functional needs, chosen pattern with trade-offs, a diagram, risks |
-| Code review | `/code-review` | Bundled with Claude Code | Reviewer | Bug findings on each wave's diff |
+| Code review | `/code-review` | Bundled with Claude Code | Organiser (D45) | Bug findings on each wave's diff |
 
 **Where they change the flow**
 

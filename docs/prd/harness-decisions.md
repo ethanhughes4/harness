@@ -266,7 +266,9 @@ evidence: code.claude.com/docs/en/plugin-evals, "Any grader you mark
 `arm: with-only`"; "A directory counts as a case when it holds a `prompt.md`
 or a `case.yaml`")
 
-D45 (OPEN, owner's choice): whether the reviewer subagent can call the
+D45: The organiser runs /code-review on each wave's range in D21 step
+4, and the reviewer does the spec and quality check only (owner chose
+option A, 2026-10-14). Background: whether the reviewer subagent can call the
 bundled /code-review through the Skill tool. The docs confirm it for the
 main session, which waits for the findings under -p, but are silent for
 subagents. Options: A, the organiser runs /code-review on the wave range
