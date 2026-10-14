@@ -1,5 +1,5 @@
 ---
-description: Asks the owner every question about a planned stage in one list, each with a recommended answer, then writes docs/spec.md and docs/decisions.md. Use before building a stage.
+description: Asks the owner every question about a planned stage in one list (at most 15, each with a recommended answer), then writes docs/brief.md, docs/spec.md and docs/decisions.md, plus a mockup and tokens for UI apps. Use before building a stage.
 argument-hint: "[stage-name]"
 disable-model-invocation: true
 ---
@@ -20,7 +20,12 @@ are not here to be agreeable. You are here to find every gap.
 ## How to ask
 
 - Ask everything in ONE numbered list, in one message. Do not ask one
-  question at a time.
+  question at a time. At most 15 questions, and only ones whose answer
+  changes what gets built; fold the rest into your recommended answers.
+  The owner may reply "ok" to accept every recommendation.
+- The brief's items are questions in the same list (skip any that
+  docs/brief.md or docs/owner.md already answers): the problem, the
+  user, the must-nevers, and what is out of scope.
 - Each question has:
   - a tag: TECHNICAL (a fact or engineering choice that has a right
     answer) or PREFERENCE (something the owner would see or notice, or
@@ -81,6 +86,15 @@ Settled answers go into these files, each with one heading per stage
   `harness:architecture` skill to write it, with one `## <stage>`
   heading. Its trade-offs go into docs/decisions.md as D-numbered
   decisions like the rest.
+
+- docs/brief.md (new project, or if missing), with exactly these
+  headings in this order and no others: `## Problem`, `## User`,
+  `## Must never` (one short concrete bullet per item), `## Out of
+  scope`. scripts/reinject.py re-reads "Must never" after compaction.
+- UI app only: docs/design/mockup.html (one self-contained page showing
+  the main screens) and docs/design/tokens.md (colours, fonts, spacing,
+  one line each). Ask the owner to approve the mockup once; change it
+  only on their reply.
 
 ## Finishing
 

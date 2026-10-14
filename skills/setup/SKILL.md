@@ -13,7 +13,9 @@ this text. If you still see a literal `${CLAUDE_PLUGIN_ROOT}` above or
 an empty value, stop and tell the owner; do not guess a path. Write
 PLUGIN_ROOT with forward slashes, even on Windows.
 
-Until the owner approves, write nothing.
+Run on its own, write nothing until the owner approves. Run from
+`/harness:new`, there is no separate approval stop: write the files,
+then show the one-screen summary (see Finishing).
 
 ## Before writing
 
@@ -25,9 +27,12 @@ Until the owner approves, write nothing.
 3. Decide the project's test commands. Each is an argument list, e.g.
    `["python","-m","pytest","-q"]`. They must run with no prompts and
    exit non-zero on failure.
-4. Show the owner every file you plan to write, in full, and ask:
-   "Is anything missing or wrong?" Change only what they dispute.
-   Existing files: show the change, never overwrite silently.
+4. Find which of these tools are actually installed (run `<tool>
+   --version`): ruff, eslint, tsc, gitleaks, semgrep, pip-audit,
+   `npm audit`. Only those go into `gates`; note the missing ones.
+5. Run on its own: show every file you plan to write and ask "Is
+   anything missing or wrong?". Existing files: show the change, never
+   overwrite silently.
 
 ## What to write
 
@@ -36,11 +41,25 @@ Until the owner approves, write nothing.
    {
      "test": [["python", "-m", "pytest", "-q"]],
      "test_limit_s": 300,
-     "max_builders": 3,
+     "run": {"cmd": ["<start command>"], "url": "<local url>"},
+     "gates": [["ruff", "check", "."]],
+     "risky": ["*auth*", "*payment*", "*crypto*", "*secret*", "*migration*",
+               ".github/*", ".gitlab-ci.yml", "*package.json",
+               "*package-lock.json", "*requirements*.txt", "*pyproject.toml",
+               "*poetry.lock", "*cargo.toml", "*cargo.lock", "*go.mod",
+               "*go.sum", ".claude/*"],
+     "acceptance_dir": "tests/acceptance",
+     "walkthrough_every": 5,
+     "max_builders": 2,
      "protected": [],
      "plugin_root": "<PLUGIN_ROOT>"
    }
    ```
+   - `run`: for an app, the command that starts it and the URL it
+     serves; leave the key out for a library or script.
+   - `gates`: argument lists, only for tools found installed in step 4
+     (lint, types, secret scan, dependency audit); `[]` if none.
+   - `risky`: the defaults above (D63); add project-specific globs.
    Use the real test commands. `protected` lists globs for data that
    must never change (e.g. `data/raw/**`); ask the owner for them, and
    use `[]` if there are none.
@@ -61,16 +80,29 @@ Until the owner approves, write nothing.
          "Bash(git branch *)",
          "Bash(git checkout *)",
          "Bash(<test command, one rule per command, ending in *>)",
-         "Bash(python <PLUGIN_ROOT>/scripts/mark_pass.py *)"
-       ]
+         "Bash(python <PLUGIN_ROOT>/scripts/mark_pass.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/status.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/gates.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/risk.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/build.py*)"
+       ],
+       "deny": ["Bash(git push*)"]
      },
-     "env": { "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "2" },
+     "env": {
+       "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "2",
+       "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL": "1h"
+     },
      "worktree": { "baseRef": "head" }
    }
    ```
    - Add one `Bash(...)` rule for each test command, and for the
      project's formatter or build command if it has one.
-   - Do not add `git push`, and do not add `defaultMode`.
+   - `deny` for `Bash(git push*)` is required (D78): auto mode would
+     push. Never add a push allow rule, and do not add `defaultMode`.
+   - `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` "1h" keeps the subagent
+     prompt cache for an hour (documented at
+     https://code.claude.com/docs/en/env-vars; needs Claude Code
+     v2.1.242 or later; 1-hour cache writes cost more).
    - The `python <PLUGIN_ROOT>/scripts/mark_pass.py *` rule must match
      the command the organiser runs, so write PLUGIN_ROOT exactly as in
      harness.json.
@@ -93,12 +125,21 @@ Until the owner approves, write nothing.
    that runs, and ONE passing test that exercises it. Do not build any
    feature.
 
+6. UI projects only: Playwright (e.g. `npm i -D @playwright/test` and
+   `npx playwright install chromium`, or the Python equivalent). Install
+   it only after the owner says yes in the summary; until then list it
+   as "not installed".
+
 ## Finishing
 
 1. Run each test command. If any fails, fix the skeleton or test, not
    the command, and run again.
 2. Check .claude/harness.json parses and `plugin_root` is set.
-3. Do not commit; `/harness:init-build` makes the first commit.
-4. Tell the owner: the plugin's hooks are now live in this project,
+3. Show a one-screen summary (about 20 lines): stack, test commands,
+   gates found and missing, `run`, the push deny, and for a UI project
+   "Install Playwright now? (yes/no)". Wait only for that answer. Run
+   from `new`, this is the only stop and no other approval is asked.
+4. Do not commit; `/harness:init-build` makes the first commit.
+5. Tell the owner: the plugin's hooks are now live in this project,
    because `.claude/harness.json` exists (delete it to switch them
    off). Next step: `/harness:questions`, then `/harness:init-build`.

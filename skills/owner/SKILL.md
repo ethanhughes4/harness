@@ -9,6 +9,11 @@ The master is `~/.claude/harness/owner.md`. Each project holds a copy at
 `docs/owner.md`. The resolver answers preference questions from that copy,
 so it must be specific and easy to search.
 
+Ask the owner only when `~/.claude/harness/owner.md` does not exist
+(D74). If it exists, copy it to `docs/owner.md` silently (make `docs/`
+if needed) and stop. Run the steps below only when there is no master,
+or when the owner asks to change their preferences.
+
 ## Steps
 
 1. Read `~/.claude/harness/owner.md` if it exists, and `docs/owner.md` if
