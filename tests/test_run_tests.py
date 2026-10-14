@@ -35,5 +35,5 @@ def test_timeout(tmp_path):
 
 
 def test_slow_warns(tmp_path):
-    r = run(tmp_path, [[PY, "-c", "import time; time.sleep(8.5)"]], limit=10)
+    r = run(tmp_path, [[PY, "-c", "import time; time.sleep(16.5)"]], limit=20)
     assert r.returncode == 0 and "warning" in r.stderr
