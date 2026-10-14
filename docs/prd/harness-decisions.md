@@ -277,3 +277,31 @@ and /code-review is dropped; C, keep the reviewer's attempt plus fallback
 and confirm it in /harness:smoke. (resolver; evidence:
 code.claude.com/docs/en/code-review#run-in-the-foreground; sub-agents doc
 names only "project, user, and plugin skills")
+
+D46: ${CLAUDE_PLUGIN_ROOT} is substituted in a plugin skill's markdown
+content and gives the plugin's installation folder. /harness:setup relies on
+it to write `plugin_root`, while agents still read harness.json (D35
+stands for agents). (resolver; evidence: code.claude.com/docs/en/skills,
+"`${CLAUDE_PLUGIN_ROOT}` | The plugin's installation directory. Substituted
+only in plugin skills.")
+
+D47: settings.json takes `worktree.baseRef: "head"` and an `env` block,
+and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` is a positive integer (default
+3). "2" gives organiser (main), then builder, then resolver. (resolver;
+evidence: code.claude.com/docs/en/worktrees#choose-the-base-branch;
+code.claude.com/docs/en/env-vars, "Number of subagent layers allowed below
+the main conversation (default: 3)")
+
+D48: Project permissions.allow rules apply only after the folder is
+trusted. `claude -p` never shows the trust dialog and ignores those rules
+in an untrusted folder, printing "this workspace has not been trusted".
+Trust is keyed on the repo root, and a worktree uses its main checkout's
+root. defaultMode auto/bypassPermissions are ignored in project settings.
+(resolver; evidence: code.claude.com/docs/en/permissions#project-allow-rules-and-workspace-trust)
+
+D49: Under `claude -p --permission-mode auto --permission-prompts none`,
+anything that would prompt is denied (logged in permission_denials) and
+the run continues; it never hangs. (resolver; evidence:
+code.claude.com/docs/en/headless#turn-off-permission-prompts-in-unattended-runs,
+"Anything that would prompt is denied unless a `PermissionRequest` hook
+allows it ... and the run continues.")

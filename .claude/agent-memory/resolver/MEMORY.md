@@ -7,3 +7,8 @@
 - [SubagentStop matcher](rule_subagentstop_matcher.md) — agent type; plugin agents are plugin:agent; colon = unanchored regex, use ^...$
 - [Plugin eval case format](rule_plugin_eval_case_format.md) — prompt.md fields, grader types, --allow-tools, Agent by namespaced name, unscored graders
 - [/code-review invocation](rule_code_review_skill_invocation.md) — bundled skill, Claude can start it; subagent use of bundled skills not documented
+- [Skill PLUGIN_ROOT](rule_skill_plugin_root_substitution.md) — ${CLAUDE_PLUGIN_ROOT} substituted in plugin skill body + allowed-tools
+- [worktree.baseRef](rule_worktree_baseref.md) — "fresh" (default) or "head"; subagent isolation:worktree follows it
+- [Spawn depth env](rule_subagent_spawn_depth.md) — CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH default 3, positive int only, 1 = no nesting
+- [Project trust](rule_project_trust_allow_rules.md) — project allow rules need trust even under -p; env/hooks don't; defaultMode auto/bypass ignored in project
+- [--permission-prompts none](rule_permission_prompts_none.md) — rules/hooks/classifier decide first, rest denied, run continues

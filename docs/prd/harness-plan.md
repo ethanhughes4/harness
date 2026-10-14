@@ -191,7 +191,7 @@ Creates:
 
 ## Wave 3
 
-### Step 8: `/harness:brief`. Status: TODO
+### Step 8: `/harness:brief`. Status: DONE
 Depends on: 1.
 
 After it: `/harness:brief` interviews the owner and writes
@@ -200,7 +200,7 @@ After it: `/harness:brief` interviews the owner and writes
 Creates: `skills/brief/SKILL.md` (D2, D32 wording).
 Tests: covered by `tests/test_layout.py`.
 
-### Step 9: `/harness:owner`. Status: TODO
+### Step 9: `/harness:owner`. Status: DONE
 Depends on: 1.
 
 After it: `/harness:owner` creates or updates
@@ -211,7 +211,7 @@ edit".
 Creates: `skills/owner/SKILL.md` (D2, D31, D32).
 Tests: covered by `tests/test_layout.py`.
 
-### Step 10: `/harness:setup`. Status: TODO
+### Step 10: `/harness:setup`. Status: DONE
 Depends on: 2, 3.
 
 After it: `/harness:setup` writes, for the project's stack and with the
@@ -224,7 +224,7 @@ passing test. Afterwards the plugin's hooks are live in that project.
 Creates: `skills/setup/SKILL.md` (D2, D3, D14, D15, D35).
 Tests: covered by `tests/test_layout.py`; proved end to end by step 15.
 
-### Step 11: The critic checks technical answers. Status: TODO
+### Step 11: The critic checks technical answers. Status: DONE
 Depends on: 1.
 
 After it: in `/harness:questions`, `harness:critic` checks every
@@ -240,7 +240,7 @@ Creates:
 
 Changes: `skills/questions/SKILL.md`: the critic pass (D29).
 
-### Step 12: `/harness:init-build`. Status: TODO
+### Step 12: `/harness:init-build`. Status: DONE
 Depends on: 1, 3.
 
 After it: `/harness:init-build` turns `docs/spec.md` into
