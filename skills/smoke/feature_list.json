@@ -5,7 +5,10 @@
     "title": "add(a, b) returns the sum",
     "ui": false,
     "depends_on": [],
-    "steps": ["add(2, 3) returns 5 in smoke.py, with a test in tests/test_smoke.py"],
+    "steps": [
+      "add(2, 3) returns 5 in smoke.py, with a test in tests/test_smoke.py"
+    ],
+    "status": "todo",
     "passes": false
   },
   {
@@ -13,8 +16,13 @@
     "stage": "smoke",
     "title": "double(x) returns add(x, x)",
     "ui": false,
-    "depends_on": ["F1"],
-    "steps": ["double(4) returns 8 in smoke.py, with a test in tests/test_smoke.py"],
+    "depends_on": [
+      "F1"
+    ],
+    "steps": [
+      "double(4) returns 8 in smoke.py, with a test in tests/test_smoke.py"
+    ],
+    "status": "todo",
     "passes": false
   }
 ]
