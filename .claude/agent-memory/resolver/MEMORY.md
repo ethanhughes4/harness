@@ -1,3 +1,9 @@
 - [StopFailure input](rule_stopfailure_input.md) — fields error/error_details/last_assistant_message + common cwd; matcher = error type
 - [Hook exec form](rule_hook_exec_form.md) — hooks.json wrapper; command+args exec form; ${CLAUDE_PLUGIN_ROOT} expands in args
 - [Plugin skill name](rule_plugin_skill_name.md) — name defaults to folder; plugin skills run as /plugin:skill
+- [SessionStart context](rule_sessionstart_context.md) — matcher compact = auto/manual compaction; hookSpecificOutput.additionalContext or plain stdout
+- [PreToolUse input](rule_pretooluse_input.md) — Bash tool_input.command; Write/Edit tool_input.file_path (absolute)
+- [Exit 2 blocking](rule_hook_exit2_blocking.md) — PreToolUse blocks, stderr to Claude; Stop continues; SubagentStop stderr to subagent
+- [SubagentStop matcher](rule_subagentstop_matcher.md) — agent type; plugin agents are plugin:agent; colon = unanchored regex, use ^...$
+- [Plugin eval case format](rule_plugin_eval_case_format.md) — prompt.md fields, grader types, --allow-tools, Agent by namespaced name, unscored graders
+- [/code-review invocation](rule_code_review_skill_invocation.md) — bundled skill, Claude can start it; subagent use of bundled skills not documented

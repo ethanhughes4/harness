@@ -232,3 +232,46 @@ D39: A plugin skill without `name` takes its folder name, run as
 /<plugin>:<folder>. (resolver; evidence: code.claude.com/docs/en/skills,
 `name`: "Defaults to the directory name."; plugin skills run "as
 `/plugin-name:skill-name`")
+
+D40: SessionStart hooks add context with stdout JSON
+{"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": ...}}
+(plain stdout also works); matcher `compact` fires on auto or manual
+compaction. (resolver; evidence: code.claude.com/docs/en/hooks#sessionstart,
+"`additionalContext` | String added to Claude's context"; "| `compact` | Auto or manual compaction |")
+
+D41: PreToolUse input: Edit and Write give `tool_input.file_path`, always
+absolute; Bash gives `tool_input.command`. (resolver; evidence:
+code.claude.com/docs/en/hooks#pretooluse-input, "For the file tools `Write`,
+`Edit`, and `Read`, `tool_input.file_path` is always absolute.")
+
+D42: Exit 2 from PreToolUse blocks the call, and Claude sees stderr as the
+reason. Exit 2 from Stop keeps Claude going with stderr as the reason.
+Exit 2 from SubagentStop keeps the subagent running, and its stderr goes
+to the subagent, not the parent. (resolver; evidence: code.claude.com/docs/en/hooks,
+"A hook that blocks by exiting 2 delivers its stderr message the same way.")
+
+D43: SubagentStop matches on agent type. A plugin agent's type is
+`plugin:name`, and a matcher containing `:` is an unanchored JS regex, so
+`^harness:builder$` is the exact match. (resolver; evidence:
+code.claude.com/docs/en/hooks#subagentstart, "anchor the matcher with `^` and
+`$` for an exact match: `^my-plugin:reviewer$`.")
+
+D44: Plugin eval cases: evals/<case>/prompt.md (frontmatter holds the case
+fields; an unknown key is an error) plus graders/<name>.md. Only the
+read-only tools listed in allowed_tools are available; Bash, Write, Edit,
+WebFetch and WebSearch need --allow-tools. A `tool_used: Agent` grader
+for a plugin agent must be `arm: with-only`, because the baseline can't
+dispatch the agent. Its input_match should target "subagent_type". (resolver;
+evidence: code.claude.com/docs/en/plugin-evals, "Any grader you mark
+`arm: with-only`"; "A directory counts as a case when it holds a `prompt.md`
+or a `case.yaml`")
+
+D45 (OPEN, owner's choice): whether the reviewer subagent can call the
+bundled /code-review through the Skill tool. The docs confirm it for the
+main session, which waits for the findings under -p, but are silent for
+subagents. Options: A, the organiser runs /code-review on the wave range
+in D21 step 4 (recommended); B, the reviewer does the bug review itself
+and /code-review is dropped; C, keep the reviewer's attempt plus fallback
+and confirm it in /harness:smoke. (resolver; evidence:
+code.claude.com/docs/en/code-review#run-in-the-foreground; sub-agents doc
+names only "project, user, and plugin skills")

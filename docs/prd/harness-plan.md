@@ -85,7 +85,7 @@ The owner does that; agents never push.
 
 ## Wave 2
 
-### Step 2: Tests block a finish. Status: TODO
+### Step 2: Tests block a finish. Status: DONE
 Depends on: 1.
 
 After it: in a project with `harness.json`, Claude and each
@@ -106,7 +106,7 @@ Note for the organiser prompt (step 14): Stop blocks cap at 8 in a row
 (D6), so the loop runs the tests itself and never relies on the hook
 looping.
 
-### Step 3: The feature list can't be edited, only marked. Status: TODO
+### Step 3: The feature list can't be edited, only marked. Status: DONE
 Depends on: 1.
 
 After it: any Edit, Write or Bash command that touches
@@ -129,7 +129,7 @@ Creates:
 Changes: `hooks/hooks.json`: add `PreToolUse` with matcher
 `Edit|Write|Bash`.
 
-### Step 4: Key context comes back after compaction. Status: TODO
+### Step 4: Key context comes back after compaction. Status: DONE
 Depends on: 1.
 
 After it: after `/compact` in a set-up project, Claude is told the
@@ -144,7 +144,7 @@ Creates:
 
 Changes: `hooks/hooks.json`: add `SessionStart` with matcher `compact`.
 
-### Step 5: The builder agent. Status: TODO
+### Step 5: The builder agent. Status: DONE
 Depends on: 1.
 
 After it: `harness:builder` builds one feature from `feature_list.json`
@@ -161,7 +161,7 @@ D36).
 
 Tests: covered by `tests/test_layout.py`.
 
-### Step 6: The reviewer agent. Status: TODO
+### Step 6: The reviewer agent. Status: DONE
 Depends on: 1.
 
 After it: `harness:reviewer` checks a merged diff against
@@ -174,7 +174,7 @@ general to features and the spec instead of plan steps (D2, D21 step
 
 Tests: covered by `tests/test_layout.py`.
 
-### Step 7: The resolver agent. Status: TODO
+### Step 7: The resolver agent. Status: DONE
 Depends on: 1.
 
 After it: `harness:resolver` answers a question from the spec,
