@@ -85,6 +85,7 @@ then show the one-screen summary (see Finishing).
          "Bash(python <PLUGIN_ROOT>/skills/ui-ux-pro-max/scripts/search.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/gates.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/risk.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/design_audit.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/build.py*)"
        ],
        "deny": ["Bash(git push*)"]
@@ -127,9 +128,12 @@ then show the one-screen summary (see Finishing).
    feature.
 
 6. UI projects only: Playwright (e.g. `npm i -D @playwright/test` and
-   `npx playwright install chromium`, or the Python equivalent). Install
-   it only after the owner says yes in the summary; until then list it
-   as "not installed".
+   `npx playwright install chromium`). For a Python UI project offer
+   `python -m pip install playwright` then
+   `python -m playwright install chromium`; the design audit
+   (`scripts/design_audit.py`, D97) needs them (D99). Install only
+   after the owner says yes in the summary (D78); until then list it as
+   "not installed".
 
 ## Finishing
 

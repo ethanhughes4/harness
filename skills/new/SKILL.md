@@ -39,9 +39,11 @@ carry on with setup and the rest.
    yourself, without questions, and record it as D-numbered decisions
    (use `skills/architecture/SKILL.md`). Write docs/brief.md,
    docs/spec.md and docs/decisions.md. For a UI app also make the
-   design exactly as the questions skill's UI step says (directions,
-   then the confirmed system, then the approved mockup, using the
-   `harness:web-design-engineer` skill). These are the only owner stops
+   design exactly as the questions skill's UI step says: the agent derives
+   the client's direction from the brief with the 10 per-client steps of
+   `harness:design-guideline` (D96), then the owner picks a direction
+   from the preview, confirms the brand sheet
+   (docs/design/design-system.md) and approves the mockup. These are the only owner stops
    besides the questions themselves.
 3. setup: follow `skills/setup/SKILL.md`, run from new: no separate
    review stop, only its one-screen summary (and the Playwright yes or
