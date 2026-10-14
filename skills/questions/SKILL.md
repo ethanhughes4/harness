@@ -91,67 +91,90 @@ Settled answers go into these files, each with one heading per stage
   headings in this order and no others: `## Problem`, `## User`,
   `## Must never` (one short concrete bullet per item), `## Out of
   scope`. scripts/reinject.py re-reads "Must never" after compaction.
-- UI app only: the design, made with the `harness:web-design-engineer`
-  skill (use the Skill tool; D88). Follow its workflow with these stops:
-  1. Directions: unless the owner named a style, run its Design
-     Direction Advisor: 3 directions from 3 different schools, each
-     with its named anchor, why it fits, and signature cues. Recommend
-     one. Never ask the owner to pick from words alone: first write
-     docs/design/directions.html, one self-contained page showing the
-     app's main screen with realistic sample data from the spec in all
-     three directions side by side, each labelled with its letter and
-     name, with a light/dark switch, and stacking at phone width. The
-     preview must meet the same bar as the final design (D94):
-     - Each direction uses its recipe file from the skill's
+- UI app only: the design (D88, D91, D96). The authority is the
+  `harness:design-guideline` skill (use the Skill tool): its Never and
+  Always rules and its 10 per-client steps win over the two vendored
+  skills. `harness:web-design-engineer` supplies the schools, recipes and
+  critique; `harness:ui-ux-pro-max` supplies the usability rules. The
+  owner has exactly three stops: pick a direction from the visual
+  preview, confirm the brand sheet, approve the mockup. Everything else
+  you do yourself.
+  1. Steps 1 to 6, from the brief, no owner stop: facts, discovery
+     answers, "this, not that" adjectives (with the target word list),
+     sliders, competitor audit (each convention tagged keep or break),
+     and the attribute-to-choice mapping, each choice with its reason.
+     The brief may be a client's, so infer from it, log every inference
+     as an ASSUMPTION in docs/decisions.md, and write all of it into the
+     brand sheet draft. Ask the owner only for a missing logo or product
+     imagery (blocking: ask it in the question list, never draw one).
+  2. Steps 7 to 9, directions: three directions, each led by a different
+     adjective and from a different school, each breaking at least one
+     category convention. They must pass the difference test: display
+     family differs, accent hue more than 60 degrees apart, at least one
+     layout primitive differs (hero composition, grid, density). If
+     not, rework. Then write docs/design/directions.html, one
+     self-contained page of style tiles in randomised order (not the
+     letters in a fixed order), each with the client's real copy and
+     these components: header, primary and secondary button, a field
+     with an error, a card, a data row, an imagery treatment; plus the
+     app's main screen with realistic sample data from the spec. Under
+     each tile: its lead adjective, "but not ...", and a 3-line
+     rationale. Mark one recommended. Light/dark switch; stacks at phone
+     width. It must meet the bar of the final design (D94):
+     - Each direction uses its recipe file from web-design-engineer's
        `references/style-recipes/` with its real fonts, palette and
-       signature moves. The three must differ in layout and typography,
-       not be one wireframe in three colour schemes.
+       signature moves, but display type, accent and one layout move
+       must trace to this brief. They differ in layout and typography,
+       not one wireframe in three colour schemes.
      - "Works offline" never means system fonts: fonts are chosen for the
-       design, then downloaded into the project at setup and served
-       locally. Only a font the recipe itself names may be a system font.
-     - Show only what that screen needs, with a clear hierarchy (one
-       dominant number or action, generous space), not every list in full.
-     - Before opening it: screenshot it with Playwright at 390 px and
-       1280 px, light and dark, and Read the screenshots. Fix any text
-       that wraps badly, overflows or collides. Run the skill's
-       5-dimension critique on each direction and rework any dimension
-       under 7. Only then open it.
-     Then open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
-     macOS: `open`; Linux: `xdg-open`). The owner picks a letter, mixes
-     ("B with A's accent"), or names their own; if they ask for changes,
-     update the page and open it again. Keep directions.html as the
-     record of the choice.
-  2. System: read the one matching file in its
-     `references/style-recipes/`, write the Design Read with the five
-     dials (its `references/design-calibration.md`) and the Design
-     Decisions block with the recipe's concrete values. Show it; the
-     owner confirms (its Checkpoint 1).
-  3. v0: docs/design/mockup.html, one self-contained page with the main
-     screens in that system, real states (empty, error, loading) where
-     they matter, and none of the clichés in its "Avoid AI-Style
-     Clichés" table or `references/failure-patterns.md`. Before showing
-     it, run its 5-dimension critique on it yourself and fix anything
-     under 7. The owner approves or asks for changes (its Checkpoint 2).
-  Use both design skills (D91): web-design-engineer decides the look
-  (direction, recipe, colours, type); `harness:ui-ux-pro-max` supplies
-  the usability rules. Before step 3, run its search for the app's UX
-  concerns (`--domain ux` for the main interactions such as forms,
-  navigation and feedback; `--domain chart` for any chart) and read its
-  `references/quick-reference.md` priorities 1 to 9. Take its palette or
-  style picks only where they agree with the chosen recipe; never pass
-  `--persist`. Check the mockup against its
-  `references/pro-rules.md` pre-delivery checklist as well as the
-  critique.
-  Then write docs/design/design-system.md (Design Read, dials, recipe
-  name, the Design Decisions block, the signature moves, the recipe's
-  "avoid" list, and a "UX rules" section: the ui-ux-pro-max rules this
-  app must meet, by priority, each one line) and docs/design/tokens.md (every colour, font,
+       design, downloaded into the project at setup and served locally.
+       Only a font the recipe itself names may be a system font.
+     - Show only what the screen needs, with a clear hierarchy.
+     - Before opening it: screenshot at 390 px and 1280 px, light and
+       dark, and Read the screenshots. Fix text that wraps badly,
+       overflows or collides. Run the 5-dimension critique on each
+       direction and rework any dimension under 7. Only then open it.
+     Open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
+     macOS: `open`; Linux: `xdg-open`). Stop 1: the owner picks a
+     direction, or asks for a mix. Resolve a mix into one coherent tile
+     (never stitch parts together) and preview it again; likewise for
+     any change. Keep directions.html as the record.
+  3. Step 10, brand sheet. Write docs/design/design-system.md as the
+     brand sheet, with the contents the guideline lists: positioning
+     line, adjectives with their "but not"s, slider positions (client
+     and competitors), conventions tagged keep or break, the chosen
+     direction with reasoning, the Design Read and dials, recipe name,
+     type, palette, spacing, shape and motion tokens each with its
+     reason, imagery rules, ownable assets, the signature moves, the
+     recipe's "avoid" list, the target word list. Add a "UX rules"
+     section (D91): the ui-ux-pro-max rules this app must meet, by
+     priority, one line each. Add a "Justified exceptions" section: each
+     Never item (N1 to N19) the design uses, as `N<k>: <reason naming
+     the brief>`; "none" if there are none. Show it. Stop 2: the owner
+     confirms it (web-design-engineer's Checkpoint 1).
+  4. v0 mockup: docs/design/mockup.html, one self-contained page with
+     the main screens in that system, real states (empty, error,
+     loading) where they matter, and none of the clichés in
+     web-design-engineer's "Avoid AI-Style Clichés" table or
+     `references/failure-patterns.md`, nor any Never item without an
+     entry under Justified exceptions. Before building it, run ui-ux-pro-max's
+     search for the app's UX concerns (`--domain ux` for the main
+     interactions; `--domain chart` for any chart), read its
+     `references/quick-reference.md` priorities 1 to 9, and take its
+     palette or style picks only where they agree with the chosen
+     recipe; never pass `--persist`. Check the mockup against its
+     `references/pro-rules.md` pre-delivery checklist and against the
+     guideline's checks, run the 5-dimension critique yourself and fix
+     anything under 7. Stop 3: the owner approves or asks for changes
+     (its Checkpoint 2).
+  Then write docs/design/tokens.md, the flat list (every colour, font,
   size, spacing, radius, shadow and motion value, one per line, as CSS
   custom property names and values). Builders and the visual reviewer
-  work only from these two files and the mockup. If the app must work
-  offline, the design may not depend on a CDN or web font at run time:
-  note in design-system.md that fonts and chart libraries are saved
-  into the project.
+  work only from design-system.md, tokens.md and the mockup; a value not
+  on the sheet may not be used. If the app must work offline, the design
+  may not depend on a CDN or web font at run time: note in
+  design-system.md that fonts and chart libraries are saved into the
+  project.
 
 ## Finishing
 
