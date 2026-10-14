@@ -31,6 +31,12 @@ are not here to be agreeable. You are here to find every gap.
 - Use plain words. Explain each technical term the first time.
 - If docs/owner.md already answers a question, use that answer and
   say so instead of asking.
+- Before showing the list, start `harness:critic` with every TECHNICAL
+  question and its recommended answer. It returns AGREE or CHANGE
+  (with a quote and link) for each. Apply every CHANGE to the list.
+  Show the owner the PREFERENCE questions, and the technical ones the
+  critic changed, each with the critic's quote and link. List the
+  AGREEd technical answers in one line each so the owner can object.
 - Then wait for the owner's reply. They change only what they
   disagree with; an answer left alone accepts your recommendation.
 - If an answer is vague, ask a short follow-up list for a number, an
