@@ -306,7 +306,7 @@ Tests: covered by `tests/test_layout.py`; proved end to end by step 15.
 
 ## Wave 5
 
-### Step 15: `/harness:smoke`. Status: TODO
+### Step 15: `/harness:smoke`. Status: DONE
 Depends on: 7, 10, 12, 14.
 
 After it: `/harness:smoke` makes a temporary git worktree of the project on a throwaway branch (D54), loads a
@@ -324,7 +324,7 @@ Creates:
 - `tests/test_check_log.py`: a clean log, a log with a denial, a
   broken line
 
-### Step 16: `/harness:report`. Status: TODO
+### Step 16: `/harness:report`. Status: DONE
 Depends on: 12, 14.
 
 After it: `/harness:report` summarises `feature_list.json` progress,

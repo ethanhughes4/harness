@@ -17,8 +17,9 @@ Bash commands that name feature_list.json, so read it with Read.
 3. `progress.md`: every entry. Each starts with a heading
    `## <YYYY-MM-DD HH:MM> <title>` and has the lines `Features built:`,
    `Reviewed:`, `Tests:`, `Skipped:`, `Provisional:`. Skip decisions
-   are separate lines `SKIPPED <id>: <reason>`. Also look for any
-   entry or line that mentions StopFailure.
+   are separate lines `SKIPPED <id>: <reason>`. An API error that
+   stopped the run is an entry titled `API error stopped the run`,
+   with an `error:` line and sometimes a `details:` line.
 
 If a file is missing, say so in its section and go on.
 
@@ -42,7 +43,7 @@ Use plain words, in this order, and address the owner as "you".
    named in the progress entries, say each eval, its result against
    baseline, and the date. If none ran, say "no evals recorded".
 5. Failures: each red suite, each reviewer finding left unfixed, each
-   StopFailure entry, each blocked builder, each entry whose `Tests:`
+   `API error stopped the run` entry (give its `error:`), each blocked builder, each entry whose `Tests:`
    shows a failure. Give the entry heading and a one-line reason.
 6. Next: one sentence on what the build will do next or what is
    needed from you.
