@@ -1,7 +1,7 @@
 """PreToolUse hook (Edit|Write|Bash): block changes to feature_list.json and `protected` paths.
 
 Blocks with exit 2 and the reason on stderr. Only scripts/mark_pass.py and scripts/status.py may change
-the list (D17, D68). A reviewer agent listed in factory.json may write only its own review file (D64).
+the list (D17, D68). The builder may not touch the acceptance tests folder (D60). A reviewer agent listed in factory.json may write only its own review file (D64).
 """
 import fnmatch
 import json
@@ -10,7 +10,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import config  # noqa: E402
+from common import config, setting  # noqa: E402
 
 LIST = "feature_list.json"
 # a lone `python <path>mark_pass.py <id>`: no shell operators outside quotes
@@ -81,6 +81,16 @@ def main():
         print("Blocked: a reviewer may write only .harness/jobs/<id>/round-<n>/review-<name>.md "
               f"with its own name ({', '.join(sorted(names))}).", file=sys.stderr)
         return 2
+    if data.get("agent_type") == "harness:builder" and tool in ("Edit", "Write", "Bash"):
+        adir = setting(cfg, "acceptance_dir").replace("\\", "/").strip("/")
+        if tool == "Bash":
+            locked = adir in inp.get("command", "").replace("\\", "/")  # ponytail: substring; over-blocks
+        else:
+            locked = blocked_path(inp.get("file_path", ""), cwd, [adir + "/*"])
+        if locked:
+            print(f"Blocked: the builder can't change {adir}/. If a test is wrong, report TEST_WRONG.",
+                  file=sys.stderr)
+            return 2
     if tool in ("Edit", "Write"):
         hit = blocked_path(inp.get("file_path", ""), cwd, protected)
     elif tool == "Bash":
