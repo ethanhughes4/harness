@@ -6,7 +6,9 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/stop_failure.py"]
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/stop_failure.py"
+            ]
           }
         ]
       }
@@ -17,7 +19,9 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.py"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.py"
+            ],
             "timeout": 600
           }
         ]
@@ -30,8 +34,24 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.py"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.py"
+            ],
             "timeout": 600
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/guard.py"
+            ]
           }
         ]
       }
