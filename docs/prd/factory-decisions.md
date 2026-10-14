@@ -279,3 +279,46 @@ libraries are bundled into the project, never "use system fonts".
 (owner, 2026-10-14: Pocket's first preview used system fonts because its
 D41 read offline as "fonts already on the device", and showed one
 wireframe in three colour schemes with a wrapping bug in B.)
+
+## Design guideline (2026-10-14)
+
+D95: The harness has its own design guideline, from the research in
+`reports/Design guideline against AI look.md`: the "Never" tells N1-N19,
+the "Always" rules A1-A17, the 10 per-client steps and the checks. It lives
+in our skill `skills/design-guideline/` (model-invocable) with the tells
+list in a versioned file. It sits above both vendored skills and wins where
+they disagree (the report's disagreement table: the terracotta sample
+direction, "Aim to Stun" glass and fade-ins, self-scored critique, browser
+acceptance only on request, Inter pairings and glass from ui-ux-pro-max,
+line height). Overriding rule: a Never item may be used and an Always rule
+broken only with a reason on the brand sheet that names the brief, the
+client's assets or a competitor gap.
+
+D96: The intake's design step follows the guideline's 10 per-client steps:
+facts, discovery answers, "this not that" adjectives, sliders, competitor
+audit with keep/break, attribute-to-choice mapping with reasons, three
+directions led by different adjectives and schools, a difference test, a
+visual preview (directions.html, randomised order, rationale under each,
+screenshotted and checked before opening, D93-D94), and a brand sheet.
+docs/design/design-system.md IS the brand sheet. The builder may use only
+values on it.
+
+D97: `scripts/design_audit.js` (browser-side, no dependencies) measures a
+page from computed styles and runs the coded tell detectors;
+`scripts/design_audit.py` runs it with Python Playwright at 360, 768 and
+1440 px plus a focus and a reduced-motion pass, checks values against the
+brand sheet tokens, and prints JSON with failures, warnings and the tell
+score (>= 4 unjustified fails, 2-3 sends to the judge). Python Playwright is
+the one non-stdlib dependency; the script says so plainly if missing.
+
+D98: The visual reviewer runs design_audit.py first (hard gates), then acts
+as the separate screenshot judge with the guideline's narrow questions:
+dominant element, closed word-list pick, generic imagery, icon family,
+reasons visible, and pairwise against the previous round in both orders
+(a disagreement is a tie). It never gives absolute taste scores. Rounds keep
+the best, not the last.
+
+D99: Python Playwright 1.64 was installed on this PC (2026-10-14); Node
+Playwright existed only in the npx cache, so agents' `require('playwright')`
+would have failed and sent every UI job to needs-human. Setup installs
+Python Playwright for Python UI projects after the owner says yes (D78).
