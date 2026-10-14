@@ -8,7 +8,7 @@ No shared list in this stage; steps touch different files.
 
 ## Wave 1
 
-### Step 1: The guideline skill. Status: TODO
+### Step 1: The guideline skill. Status: DONE
 Depends on: none.
 After it: agents can load `harness:design-guideline` and get the Never/Always
 rules, per-client steps and checks, with precedence over the vendored skills.
@@ -19,7 +19,7 @@ the overriding reason rule, precedence table, Always A1-A17, per-client steps
 `skills/design-guideline/SOURCE.md` (the report and research notes it comes
 from). Changes: `tests/test_layout.py` (MODEL_INVOCABLE gains it). (D95)
 
-### Step 2: The design audit script. Status: TODO
+### Step 2: The design audit script. Status: DONE
 Depends on: none.
 After it: `python <plugin_root>/scripts/design_audit.py <url> [--sheet docs/design/design-system.md]`
 prints a JSON audit of a running page and exits non-zero on hard failures.
@@ -28,7 +28,7 @@ Creates: `scripts/design_audit.js`, `scripts/design_audit.py`,
 >= 4 and fail; one clean page must pass; skip the browser tests if Python
 Playwright is missing). (D97)
 
-### Step 3: The intake follows the per-client steps. Status: TODO
+### Step 3: The intake follows the per-client steps. Status: DONE
 Depends on: none.
 After it: `/harness:new` derives a client's direction from the brief with
 the 10 steps and writes design-system.md as the brand sheet.
