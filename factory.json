@@ -1,0 +1,5 @@
+{
+  "reviewers": [
+    {"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false}
+  ]
+}

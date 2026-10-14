@@ -34,6 +34,7 @@ Each feature is one object in a JSON list:
   "ui": false,
   "depends_on": [],
   "steps": ["<acceptance step>", "..."],
+  "status": "todo",
   "passes": false
 }
 ```
@@ -45,6 +46,7 @@ Each feature is one object in a JSON list:
 - `steps`: concrete, checkable acceptance steps a builder can write a
   test for, using the examples in the spec. Where the spec has a
   decision rule or an eval, name it and its D-number in the step.
+- `status`: always `"todo"` (D68). Only `status.py` changes it later.
 - `passes`: always false.
 - Add `"owner-writes": true` only if the brief or spec asks for the
   owner to write that part (D32). Otherwise leave the key out.
@@ -60,20 +62,21 @@ Write the list with 2-space indentation.
 1. `progress.md`: create it if missing. Append, at the end, an entry:
    `## <YYYY-MM-DD HH:MM> init-build: <stage>`, then plain lines: the
    number of features added and any that are owner-writes.
-2. `build.cmd`: a single line, exactly this, with nothing added:
+2. `build.cmd`: a single line, exactly this, with `<plugin_root>`
+   replaced by the real value from harness.json (D69):
    ```
-   claude -p --agent harness:organiser "/goal Every feature in feature_list.json has passes true and all test suites pass, or stop after 200 turns" --permission-mode auto --permission-prompts none --output-format stream-json --verbose >> build-log.jsonl
+   python "<plugin_root>/scripts/build.py"
    ```
-   It appends to build-log.jsonl and never uses `--continue`: a rerun
-   starts a fresh session and resumes from the files (D26). If
-   build.cmd exists and differs, show the owner the difference and keep
-   it unless they say to replace it.
-3. Add `build-log.jsonl` to .gitignore.
+   build.py starts a fresh organiser session per round, appends to
+   build-log.jsonl, and stops by itself; a rerun resumes from the files.
+   If build.cmd exists and differs, show the owner the difference and
+   keep it unless they say to replace it.
+3. Add `build-log.jsonl` and `.harness/wt/` to .gitignore.
 
 ## Finishing
 
 1. Check feature_list.json parses, ids are unique, every `depends_on`
-   id exists, and every `passes` is false.
+   id exists, every `passes` is false and every `status` is `todo`.
 2. Show the owner the features (id, title, depends_on) and ask: "Is
    anything missing or wrong?" Change only what they dispute.
 3. Then run `git add -A` and `git commit -m "Init build: <stage>"`.
