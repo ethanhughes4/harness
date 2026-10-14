@@ -61,7 +61,10 @@ Run one job per picked feature, all in the same message where you can
 1. Set up. `python <plugin_root>/scripts/status.py <id> building`.
    Folder `.harness/jobs/<id>/`. Write `brief.md` there: the feature, its
    `steps`, and the parts of `docs/spec.md` and `docs/decisions.md` it
-   needs. Make the worktree yourself:
+   needs. If `.harness/jobs/<id>/owner-note.md` exists (the owner sent
+   the job back with `/harness:rework`), copy the note into `brief.md`
+   under "Owner's note" and give it to the fresh builder as its
+   findings; the rounds start again from 1. Make the worktree yourself:
    `git worktree add .harness/wt/<id> -b factory/<id>` (if it already
    exists from a dead session, reuse it).
 2. Tests first. Start `harness:test-writer` with `name: test-writer-<id>`.
