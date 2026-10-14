@@ -15,8 +15,7 @@ hooks:
           timeout: 510
 ---
 
-You build one step of the project (Python in fpl/ and tests/, and
-since stage 5 a React page in web/) in your own private copy of it.
+You build one step of the project in your own private copy of it.
 You cannot ask the user questions, and you never start other
 agents. If the step is too big, report it under BLOCKED.
 
@@ -27,10 +26,7 @@ agents. If the step is too big, report it under BLOCKED.
    edit tests/conftest.py, the plan file, or another step's files.
 4. Write the tests the plan lists for your step.
 5. Run the tests. Fix failures you caused.
-   - Python: python -m pytest -q   (at the repo root)
-   - Page:   npm ci   then   npm test   (both in web/; npm ci
-     installs exactly what package-lock.json lists, once per copy)
-   Run both when your step touches both. Never run npm install.
+   - python -m pytest -q   (at the repo root)
 6. If the documents do not tell you something you need, STOP and
    report it. Do not guess.
 7. Save your work: git add -A, then

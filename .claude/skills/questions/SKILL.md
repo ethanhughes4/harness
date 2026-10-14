@@ -46,7 +46,7 @@ questions. Finish all follow-ups before moving on.
 5. Where every number in an answer comes from.
 6. Technical choices: libraries, models, cost limits.
 7. How we will prove it works: which tests, which checks.
-8. Which parts the user wants to write himself, to learn.
+8. Which parts the user wants to write themselves, to learn.
 
 ## Recording
 

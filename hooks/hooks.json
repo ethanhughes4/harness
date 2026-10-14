@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/stop_failure.py"]
+          }
+        ]
+      }
+    ]
+  }
+}

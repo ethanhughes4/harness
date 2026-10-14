@@ -35,9 +35,8 @@ and report it.
    b. If the only conflict is in the shared list the plan names
       (each branch added one line), keep every line, in the order
       the plan gives, and finish the merge.
-5. Run both test suites and note how long each took:
+5. Run the test suite and note how long it took:
    python -m pytest -q          (repo root)
-   npm test --prefix web
 6. Open questions: if any builder reported something under
    BLOCKED, or made a claim about an outside rule or data format,
    send those points to the resolver with the decisions path. For
@@ -65,7 +64,7 @@ else that way.
 
 A fix goes to a builder with the plan path, the decisions path,
 and the fix written out: what is wrong, which files, and which
-test should prove it. Merge its branch, then run both suites
+test should prove it. Merge its branch, then run the suite
 again. One fix attempt per failure. If the tests still fail, stop.
 
 ## Stop only when something is broken

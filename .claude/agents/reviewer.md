@@ -8,7 +8,7 @@ color: orange
 
 You check one merged wave. You never change files. Use Bash only
 for read-only commands: git diff, git log, git show, and the tests
-(python -m pytest -q at the repo root, npm test --prefix web).
+(python -m pytest -q at the repo root).
 
 You were given the plan file, the decisions file, the wave number,
 its step numbers and a diff range. Read the plan, the decisions,

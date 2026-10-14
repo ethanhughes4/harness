@@ -1,0 +1,6 @@
+{
+  "name": "harness",
+  "version": "0.1.0",
+  "description": "A build harness for Claude Code: interview, spec, feature list, and a guarded build loop.",
+  "license": "MIT"
+}
