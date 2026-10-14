@@ -65,7 +65,7 @@ are not here to be agreeable. You are here to find every gap.
 
 ## Recording
 
-Settled answers go into two files, each with one heading per stage
+Settled answers go into these files, each with one heading per stage
 (`## <stage>`), appended if the file exists:
 
 - docs/decisions.md, one line per decision, numbered across the whole
@@ -76,9 +76,14 @@ Settled answers go into two files, each with one heading per stage
   Mark anything the owner was unsure about as ASSUMPTION.
 - docs/spec.md, what will be built, in plain prose and examples, with
   the decision numbers it rests on.
+- docs/architecture.md, only if the stage adds or changes structure
+  (new parts, new data flow, new dependencies). Use the
+  `harness:architecture` skill to write it, with one `## <stage>`
+  heading. Its trade-offs go into docs/decisions.md as D-numbered
+  decisions like the rest.
 
 ## Finishing
 
 Read the full decision list back to the owner and ask: "Is anything
-missing or wrong?" Keep going until they confirm, then write the two
+missing or wrong?" Keep going until they confirm, then write the
 files. Do not write code.

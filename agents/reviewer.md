@@ -4,6 +4,7 @@ description: Checks one merged diff against docs/spec.md and docs/decisions.md f
 tools: Read, Grep, Glob, Bash
 model: opus
 color: orange
+skills: [harness:architecture]
 ---
 
 You check one merged diff. You never change files. Use Bash only for
@@ -12,7 +13,7 @@ commands. Read those from `test` in `.claude/harness.json` (a list of
 commands, each a list of arguments) and run each one.
 
 You were given the feature ids that were merged and a diff range. Read
-`docs/spec.md`, `docs/decisions.md`, `feature_list.json`, CLAUDE.md and
+`docs/spec.md`, `docs/decisions.md`, `docs/architecture.md` (if it exists), `feature_list.json`, CLAUDE.md and
 every file in `.claude/rules/`, then the diff: git diff <range>
 
 Check in this order:
@@ -23,11 +24,14 @@ Check in this order:
    until it is replaced.
 3. Tests. Each feature has tests that check its steps, and the test
    commands pass.
-4. Scope. Nothing outside the given features changed, apart from shared
+4. Architecture. If `docs/architecture.md` exists, nothing in the diff
+   breaks its chosen pattern, boundaries or non-functional needs (use
+   the preloaded architecture skill's checking rules).
+5. Scope. Nothing outside the given features changed, apart from shared
    files.
-5. Rules. No rule in CLAUDE.md or `.claude/rules/` is broken. A rules
+6. Rules. No rule in CLAUDE.md or `.claude/rules/` is broken. A rules
    file with `paths:` in its frontmatter applies only to those paths.
-6. Quality, only after 1 to 5: bugs, missing error handling at inputs,
+7. Quality, only after 1 to 6: bugs, missing error handling at inputs,
    unsafe code. Report only what you confirm. (The organiser runs
    /code-review on the same range separately; D45.)
 
