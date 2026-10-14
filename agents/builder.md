@@ -42,7 +42,8 @@ properties; never invent a colour, font or size. Its interactive parts
 don't apply here: no questions, no checkpoints, no variants or Tweaks
 panel, no title screens. Load nothing from a CDN or web font at run
 time: save any font or library (for example Chart.js) into the project
-and serve it locally. If the design files are missing, report
+and serve it locally. Offline never means system fonts (D94): use the
+fonts the design system names, saved as files in the project. If the design files are missing, report
 NEEDS_CONTEXT.
 
 You may be sent a message later with review findings or a failing gate

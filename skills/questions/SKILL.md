@@ -100,8 +100,23 @@ Settled answers go into these files, each with one heading per stage
      docs/design/directions.html, one self-contained page showing the
      app's main screen with realistic sample data from the spec in all
      three directions side by side, each labelled with its letter and
-     name, with a light/dark switch, and stacking at phone width. Then
-     open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
+     name, with a light/dark switch, and stacking at phone width. The
+     preview must meet the same bar as the final design (D94):
+     - Each direction uses its recipe file from the skill's
+       `references/style-recipes/` with its real fonts, palette and
+       signature moves. The three must differ in layout and typography,
+       not be one wireframe in three colour schemes.
+     - "Works offline" never means system fonts: fonts are chosen for the
+       design, then downloaded into the project at setup and served
+       locally. Only a font the recipe itself names may be a system font.
+     - Show only what that screen needs, with a clear hierarchy (one
+       dominant number or action, generous space), not every list in full.
+     - Before opening it: screenshot it with Playwright at 390 px and
+       1280 px, light and dark, and Read the screenshots. Fix any text
+       that wraps badly, overflows or collides. Run the skill's
+       5-dimension critique on each direction and rework any dimension
+       under 7. Only then open it.
+     Then open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
      macOS: `open`; Linux: `xdg-open`). The owner picks a letter, mixes
      ("B with A's accent"), or names their own; if they ask for changes,
      update the page and open it again. Keep directions.html as the

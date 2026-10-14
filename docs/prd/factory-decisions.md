@@ -268,3 +268,14 @@ alone. It writes docs/design/directions.html (the main screen in all three
 directions side by side, with sample data, light/dark, phone width) and
 opens it in the browser before asking. (owner, 2026-10-14, during Pocket's
 intake)
+
+D94: A design preview meets the same bar as the final design: each
+direction from its real recipe (fonts, palette, signature moves), the
+three different in layout and type, not recolours; only what the screen
+needs, with clear hierarchy; screenshotted at 390 and 1280 px in light and
+dark and fixed before it is shown; each direction critiqued with the
+skill's 5 dimensions and reworked below 7. "Works offline" means fonts and
+libraries are bundled into the project, never "use system fonts".
+(owner, 2026-10-14: Pocket's first preview used system fonts because its
+D41 read offline as "fonts already on the device", and showed one
+wireframe in three colour schemes with a wrapping bug in B.)
