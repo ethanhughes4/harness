@@ -96,7 +96,16 @@ Settled answers go into these files, each with one heading per stage
   1. Directions: unless the owner named a style, run its Design
      Direction Advisor: 3 directions from 3 different schools, each
      with its named anchor, why it fits, and signature cues. Recommend
-     one. The owner picks (or names their own).
+     one. Never ask the owner to pick from words alone: first write
+     docs/design/directions.html, one self-contained page showing the
+     app's main screen with realistic sample data from the spec in all
+     three directions side by side, each labelled with its letter and
+     name, with a light/dark switch, and stacking at phone width. Then
+     open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
+     macOS: `open`; Linux: `xdg-open`). The owner picks a letter, mixes
+     ("B with A's accent"), or names their own; if they ask for changes,
+     update the page and open it again. Keep directions.html as the
+     record of the choice.
   2. System: read the one matching file in its
      `references/style-recipes/`, write the Design Read with the five
      dials (its `references/design-calibration.md`) and the Design

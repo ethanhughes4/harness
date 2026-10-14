@@ -262,3 +262,9 @@ session, so the skill appears twice (`ui-ux-pro-max:ui-ux-pro-max` and
 `harness:ui-ux-pro-max`). Harness agents name `harness:ui-ux-pro-max`.
 Disabling the user plugin (`claude plugin disable ui-ux-pro-max`) avoids
 the double description cost (D33); left to the owner.
+
+D93: The intake never asks the owner to pick a design direction from words
+alone. It writes docs/design/directions.html (the main screen in all three
+directions side by side, with sample data, light/dark, phone width) and
+opens it in the browser before asking. (owner, 2026-10-14, during Pocket's
+intake)
