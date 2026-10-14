@@ -39,11 +39,11 @@ def test_skills_not_model_invocable_except_architecture():
 def test_plugin_root_variable_only_where_it_is_read():
     # Claude Code substitutes ${CLAUDE_PLUGIN_ROOT} in plugin agent and skill text, so a
     # sentence like "never use ${CLAUDE_PLUGIN_ROOT}" becomes "never use <the plugin path>".
-    # Only setup and new may name it, on the line that hands them the path.
+    # Only setup, new and smoke may name it, on the line that hands them the path.
     var = "${CLAUDE_PLUGIN_ROOT}"
     for f in list(ROOT.glob("agents/*.md")) + list(ROOT.glob("skills/*/SKILL.md")):
         lines = [l for l in f.read_text(encoding="utf-8").splitlines() if var in l]
-        if f.parent.name in ("setup", "new"):
+        if f.parent.name in ("setup", "new", "smoke"):
             assert lines == [f"The plugin's absolute folder is: {var}"], f
         else:
             assert not lines, f

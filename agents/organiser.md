@@ -86,7 +86,8 @@ Run one job per picked feature, all in the same message where you can
    `.harness/jobs/<id>/gates-<round>.md`. If it fails, that file is the
    round's findings: go to Rework without running any reviewer.
 5. Risk. `python <plugin_root>/scripts/risk.py <id>` prints
-   `{"risk": "low"|"high", "files": [...]}`. Never let the builder say
+   `{"risk": "low"|"high", "files": [...]}`, where `files` lists only
+   the changed files that matched a `risky` glob (empty means low risk). Never let the builder say
    what the risk is.
 6. Review. Status `review`. Create `.harness/jobs/<id>/round-<n>/`. For
    each reviewer in `factory.json`, run it if its `when` is `always`; or

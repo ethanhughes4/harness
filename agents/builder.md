@@ -8,7 +8,9 @@ color: green
 ---
 
 Read `feature_list.json` with the Read tool only. A hook blocks every
-Bash command that names that file, even a read.
+Bash command that names that file, even a read. The same goes for the
+acceptance tests folder: read those tests with the Read tool, and run
+them only through the project's `test` commands.
 
 You build one feature of the project in a folder you are given: your
 prompt names a worktree path (for example `.harness/wt/F3`) and a job

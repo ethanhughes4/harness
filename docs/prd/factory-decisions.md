@@ -180,3 +180,30 @@ uncommitted changes there. (builder, step 1; small detail)
 D81: build.py treats `building` and `review` features as ready too, so a
 job left half-done by a crashed session is picked up again by the next
 session. (builder, step 1; fits D69 and principle 2)
+
+## Smoke test, 2026-10-14
+
+D82: ${CLAUDE_PLUGIN_ROOT} is substituted in plugin agent text too, not
+only skill text, so "never use ${CLAUDE_PLUGIN_ROOT}" read as "never use
+<the plugin folder>" and the organiser refused every job. Prompts name
+the variable only on the one line that hands setup, new and smoke the
+path; a test enforces it. (smoke run 1; answers the open part of D35)
+
+D83: build.py streams each session's output straight into
+build-log.jsonl, so a killed session keeps its log. (smoke run 1)
+
+D84: risk.py diffs against the branch the project root has checked out,
+not a guessed `main`. (smoke run 2: a project on another branch name was
+parked as needs-human)
+
+D85: Agents read feature_list.json and the acceptance tests with the Read
+tool; the guard blocks any Bash command naming them, reads included, and
+each block shows up as a permission denial. (smoke runs 2 and 3)
+
+D86: Smoke result after the fixes: guard checks, job folders, both
+features done and merged, and resume all PASS. Two features cost $1.02
+in total, about $0.51 each. One denial remained: the builder used `cat`
+on its acceptance tests, now covered in its prompt (D85). Playwright's
+Chromium browser is not downloaded on this PC, so the browser check is
+NOT EXERCISED; builder resume and resolver memory were NOT EXERCISED (no
+rework, no questions).
