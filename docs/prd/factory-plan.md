@@ -79,7 +79,7 @@ Changes:
 
 ## Wave 2
 
-### Step 2: Tests are written first and locked. Status: TODO
+### Step 2: Tests are written first and locked. Status: DONE
 Depends on: 1.
 
 After it: each job starts with `harness:test-writer` committing failing
@@ -91,7 +91,7 @@ Changes: `scripts/guard.py` (block `harness:builder` on
 `<acceptance_dir>/**`), `tests/test_guard.py`, `agents/organiser.md`
 (test-writer first; TEST_WRONG path through the resolver) (D59, D60).
 
-### Step 3: Security review on risky changes. Status: TODO
+### Step 3: Security review on risky changes. Status: DONE
 Depends on: 1.
 
 After it: a job that touches a `risky` path gets a security review and
@@ -100,7 +100,7 @@ always ends needs-human.
 Creates: `agents/security.md` (D65).
 Changes: `factory.json`: add `security` (`high_risk`, browser false).
 
-### Step 4: The user tester uses the app. Status: TODO
+### Step 4: The user tester uses the app. Status: DONE
 Depends on: 1.
 
 After it: every UI feature is used in a real browser like a person
@@ -111,7 +111,7 @@ Creates: `agents/user-tester.md` (Playwright through Bash; starts the
 app from `run`, stops it after) (D65, D70, D79).
 Changes: `factory.json`: add `user` (`ui`, browser true).
 
-### Step 5: The visual reviewer checks the look. Status: TODO
+### Step 5: The visual reviewer checks the look. Status: DONE
 Depends on: 1.
 
 After it: every UI feature is screenshotted at phone and desktop width,
@@ -121,7 +121,7 @@ axe scan.
 Creates: `agents/visual.md` (D65).
 Changes: `factory.json`: add `visual` (`ui`, browser true).
 
-### Step 6: Approve and rework. Status: TODO
+### Step 6: Approve and rework. Status: DONE
 Depends on: 1.
 
 After it: `/harness:approve <id>` merges a needs-human job;
@@ -129,7 +129,7 @@ After it: `/harness:approve <id>` merges a needs-human job;
 
 Creates: `skills/approve/SKILL.md`, `skills/rework/SKILL.md` (D76).
 
-### Step 7: The report shows the factory. Status: TODO
+### Step 7: The report shows the factory. Status: DONE
 Depends on: 1.
 
 After it: `/harness:report` lists needs-human jobs with their folders,
