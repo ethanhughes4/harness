@@ -1,4 +1,4 @@
-"""python design_audit.py <url> [--sheet docs/design/design-system.md] [--json-out FILE]
+"""python design_audit.py <url> [--sheet docs/design/design-system.md] [--tokens FILE] [--json-out FILE]
 
 Audits a running page at 360, 768 and 1440 px (computed styles, no AI) and prints JSON
 {"result": "pass"|"review"|"fail", "fails", "warns", "tells", "metrics"}. Exit 0 pass/review, 1 fail, 3 no Playwright.
@@ -38,10 +38,49 @@ def justified(sheet):
         return set(re.findall(r"^\W*(N\d+)\s*[:–-]\s*\S", f.read(), re.M))
 
 
+def hex_rgb(v):
+    v = v.strip().lower()
+    m = re.fullmatch(r"#([0-9a-f]{3,8})", v)
+    if m:
+        h = m.group(1)
+        if len(h) in (3, 4):
+            h = "".join(c * 2 for c in h)
+        return ",".join(str(int(h[i:i + 2], 16)) for i in (0, 2, 4)) if len(h) in (6, 8) else None
+    m = re.fullmatch(r"rgba?\(([^)]+)\)", v)
+    if m:
+        n = re.findall(r"[\d.]+", m.group(1))[:3]
+        return ",".join(str(round(float(x))) for x in n) if len(n) == 3 else None
+
+
+def token_values(path):
+    """-> (set of rgb strings, set of lowercase first font names) from `--name: value;` lines."""
+    cols, fonts = set(), set()
+    with open(path, encoding="utf-8") as f:
+        for v in re.findall(r"^\W*--[\w-]+\s*:\s*([^;]+?)\s*;?\s*$", f.read(), re.M):
+            c = hex_rgb(v)
+            if c:
+                cols.add(c)
+            else:
+                fonts.add(v.split(",")[0].strip().strip("\"'").lower())
+    return cols, fonts
+
+
+def stray(m, tokens):
+    cols, fonts = token_values(tokens)
+    near = lambda c, t: all(abs(int(a) - t) <= 8 for a in c.split(","))
+    bad = [f"rgb({c})" for c in m["usedColours"] if c not in cols and not near(c, 255) and not near(c, 0)]
+    bad += [f for f in m["usedFonts"] if f.lower() not in fonts and not re.fullmatch(GENERIC, f, re.I)]
+    return sorted(bad)
+
+
+GENERIC = r"serif|sans-serif|monospace|cursive|fantasy|ui-.*|-apple-system|blinkmacsystemfont|system-ui"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("url")
     ap.add_argument("--sheet")
+    ap.add_argument("--tokens", help="tokens.md (default: tokens.md next to the sheet, if it exists)")
     ap.add_argument("--json-out")
     a = ap.parse_args()
     try:
@@ -87,6 +126,11 @@ def main():
         fails.append(f"no visible focus style on {nofocus}")
     if reduced:
         fails.append(f"{reduced} elements still animate under prefers-reduced-motion")
+    tokens = a.tokens or (a.sheet and os.path.join(os.path.dirname(os.path.abspath(a.sheet)), "tokens.md"))
+    if tokens and os.path.exists(tokens):
+        bad = stray(m, tokens)
+        if bad:
+            fails.append(f"token drift: {len(bad)} values not in tokens.md: {bad[:10]}")
     ok = justified(a.sheet)
     unj = sorted(k for k in tells if k not in ok)
     if len(unj) >= 4:
@@ -105,6 +149,8 @@ def main():
         (bool(m["numericWithoutTabular"]), f"numeric cells without tabular-nums: {m['numericWithoutTabular']}"),
         (bool(m["untrackedUppercase"]), f"uppercase text without tracking >= 0.05em: {m['untrackedUppercase']}"),
     ]
+    checks.append((bool(m["lineChars"]) and any(not 45 <= n <= 90 for _, n in m["lineChars"]),
+                   f"paragraph line length outside 45-90 characters at 1440 px: {[x for x in m['lineChars'] if not 45 <= x[1] <= 90][:5]}"))
     warns = [msg for bad, msg in checks if bad]
     result = "fail" if fails else "review" if len(unj) >= 2 else "pass"
     out = {"result": result, "fails": fails, "warns": warns,

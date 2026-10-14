@@ -32,13 +32,14 @@ with `"ui": true` and status done.
    writing its output to a log in the round folder. Poll `url` until it
    answers (up to 60 seconds). If it never answers, that is a blocking
    finding: cite the command and the log.
-2. Check Playwright is installed (`python -c "import playwright"`, or
-   `node -e "require('playwright')"` per the stack; a browser must launch).
+2. Check Playwright is installed (`python -c "import playwright"` first (D99);
+   only if the project is Node, `node -e "require('playwright')"`; a browser
+   must launch).
    If not, stop the app and write the review with first line
    `VERDICT: CHANGES` and one finding: "Playwright not installed; cannot
    verify". Never write PASS for an app you did not use. Do not install it.
 3. Write a small throwaway script in the round folder (Python
-   `playwright.sync_api`, or Node per the stack). No MCP browser tools, no
+   `playwright.sync_api`; Node only for a Node project). No MCP browser tools, no
    Claude in Chrome. The script: follows the feature's acceptance steps in
    order; then tries obvious wrong inputs (empty, very long, wrong type,
    double click, back button); records console errors, page errors and

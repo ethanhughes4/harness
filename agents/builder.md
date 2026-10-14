@@ -24,7 +24,11 @@ any question the documents don't answer. Never start any other agent.
 
 ## Features with `"ui": true` (D88)
 
-Before writing any UI, invoke both design skills with the Skill tool:
+Before writing any UI, invoke `harness:design-guideline` too (D95): it
+is the authority over the two vendored skills where they disagree. Build
+only from values on the brand sheet (`docs/design/design-system.md`) and
+`docs/design/tokens.md`; never introduce a value that is not on the
+sheet. Then invoke both design skills with the Skill tool:
 `harness:web-design-engineer` for the look and `harness:ui-ux-pro-max`
 for usability (D91). Follow the "UX rules" in
 `docs/design/design-system.md`, search ui-ux-pro-max (`--domain ux`)
@@ -45,6 +49,12 @@ time: save any font or library (for example Chart.js) into the project
 and serve it locally. Offline never means system fonts (D94): use the
 fonts the design system names, saved as files in the project. If the design files are missing, report
 NEEDS_CONTEXT.
+
+Before reporting DONE on a ui feature (D97): start the app from `run` in
+`.claude/harness.json`, then for each page of the feature run
+`python <plugin_root>/scripts/design_audit.py <url> --sheet docs/design/design-system.md`
+(`plugin_root` is in `.claude/harness.json`, D35) and fix every fail it
+reports. Stop the app afterwards, also when a step failed.
 
 You may be sent a message later with review findings or a failing gate
 output. Fix exactly those, in the same folder, run the tests again,

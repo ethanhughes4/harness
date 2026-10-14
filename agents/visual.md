@@ -33,12 +33,14 @@ feature id.
    logging to the round folder. Poll `url` until it answers (up to 60
    seconds). If it never answers, that is a blocking finding: cite the
    command and the log.
-2. Check Playwright is installed (`python -c "import playwright"`, or
-   `node -e "require('playwright')"` per the stack; a browser must launch).
+2. Check Playwright is installed (`python -c "import playwright"` first (D99);
+   only if the project is Node, `node -e "require('playwright')"`; a browser
+   must launch).
    If not, stop the app and write the review with first line
    `VERDICT: CHANGES` and one finding: "Playwright not installed; cannot
    verify". Never write PASS for an app you did not see. Do not install it.
-3. Invoke the `harness:web-design-engineer` skill with the Skill tool
+3. Invoke `harness:design-guideline` (it wins where the other two
+   disagree) and the `harness:web-design-engineer` skill with the Skill tool
    and read its `references/critique-guide.md` and
    `references/failure-patterns.md`, plus the one style recipe named in
    `docs/design/design-system.md` (D88). Also invoke
@@ -48,7 +50,7 @@ feature id.
    exist. Without them, judge only layout, contrast, states and axe, and
    say in Notes that there was no mockup or tokens to compare against.
 4. Write a throwaway script in the round folder (Python
-   `playwright.sync_api`, or Node per the stack). No MCP browser tools. For
+   `playwright.sync_api`; Node only for a Node project). No MCP browser tools. For
    each page of the feature, at 1280 px and 390 px wide, in light and dark
    (emulate `prefers-color-scheme` with `color_scheme`), reach the page as
    a user would and save `<page>-<width>-<scheme>.png` in the round
@@ -64,10 +66,24 @@ feature id.
    `https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js`. If
    neither can be loaded, do not fail on it: put "axe not run: <why>" in
    Notes and judge contrast by eye from the screenshots. Do not install it.
-6. Read every screenshot with Read and compare with the mockup, tokens
-   and design system. Then run the skill's 5-dimension critique on the
-   screenshots and put the scores under `Notes:`.
-7. Always stop the app afterwards, also when a step failed (kill the
+6. Audit gate (D97), before judging: for each page of the feature run
+   `python <plugin_root>/scripts/design_audit.py <url> --sheet docs/design/design-system.md`
+   (`plugin_root` is in `.claude/harness.json`). Any `fail` is a blocking
+   finding that cites the audit line. A `review` result (2-3 unjustified
+   tells) or any warning means: look closely at those elements.
+7. Screenshot judge (D98). Read every screenshot with Read and compare
+   with the mockup, tokens and design system, answering only the
+   guideline's narrow questions: (a) what is the dominant element; (b) from
+   the closed word list built from the brand sheet's target word list
+   (targets, opposites, distractors), pick the five that best describe the
+   page: pass if at least 3 targets and 0 opposites; (c) is the imagery
+   generic; (d) is there one icon family; (e) for each reason recorded in
+   the brand sheet, is it visible: one yes/no per reason; (f) if a previous
+   round exists, compare this round's screenshots with the previous round's
+   pairwise, in both orders; a disagreement between the orders is a tie.
+   Give no absolute 0-10 taste scores. The skill's 5-dimension critique may
+   be written under `Notes:`, as notes only.
+8. Always stop the app afterwards, also when a step failed (kill the
    process tree you started; check the port is free).
 
 ## Review file
@@ -75,6 +91,10 @@ feature id.
 The first line is exactly `VERDICT: PASS` or `VERDICT: CHANGES`. Block
 (CHANGES) only for:
 
+- an audit fail (cite the audit line)
+- an unjustified tell
+- a recorded reason that is not visible
+- the word-list test failed
 - broken layout or overflow
 - colours, fonts or spacing not from the tokens
 - failed contrast, or serious or critical axe violations
@@ -94,5 +114,5 @@ Each blocking finding is one line that cites a screenshot:
 <what is wrong and what is expected> (evidence: <screenshot path>; viewport: <width, scheme>)
 
 Axe findings cite the rule id, the element selector and the screenshot.
-Matters of taste are notes under `Notes:`, never CHANGES. Behaviour is not
+Absolute taste scores never block; matters of taste are notes under `Notes:`, never CHANGES. Behaviour is not
 your job (the user tester does that). Reply with the verdict line only.

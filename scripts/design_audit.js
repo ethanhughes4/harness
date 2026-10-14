@@ -15,6 +15,7 @@
     const h = mx === c.r ? ((c.g - c.b) / d) % 6 : mx === c.g ? (c.b - c.r) / d + 2 : (c.r - c.g) / d + 4;
     return (h * 60 + 360) % 360; };
   const tells = {};
+  const used = new Set(), usedFonts = new Set();
   const tell = (n, e, why) => { (tells[n] = tells[n] || { why, elements: [] }).elements.push(typeof e === 'string' ? e : sel(e)); };
   const uniq = (a) => [...new Set(a)];
 
@@ -33,10 +34,17 @@
       const f = s.fontFamily.split(',')[0].trim().replace(/["']/g, '');
       if (!GENERIC.test(f) && !MONO.test(f)) fams.add(f);
       sizes.add(s.fontSize); weights.add(s.fontWeight);
+      usedFonts.add(s.fontFamily.split(',')[0].trim().replace(/["']/g, ''));
+      const tc = rgb(s.color); if (tc && tc.a > 0.05) used.add([tc.r, tc.g, tc.b].map(Math.round).join());
       const c = rgb(s.color); if (c) colours.add([c.r, c.g, c.b].map((x) => Math.round(x / 24)).join());
     }
     const bg = rgb(s.backgroundColor);
     if (bg && bg.a > 0.1) colours.add([bg.r, bg.g, bg.b].map((x) => Math.round(x / 24)).join());
+    if (bg && bg.a > 0.05) used.add([bg.r, bg.g, bg.b].map(Math.round).join());
+    for (const side of ['Top', 'Right', 'Bottom', 'Left']) {
+      const bc = rgb(s['border' + side + 'Color']);
+      if (bc && bc.a > 0.05 && parseFloat(s['border' + side + 'Width']) > 0 && s['border' + side + 'Style'] !== 'none') used.add([bc.r, bc.g, bc.b].map(Math.round).join());
+    }
     for (const p of ['marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'rowGap', 'columnGap']) {
       const v = parseFloat(s[p]); if (v > 0) spaces.push(Math.round(v));
     }
@@ -115,6 +123,14 @@
     parseFloat(s.letterSpacing) / parseFloat(s.fontSize) < 0.05; }).map(sel);
   const chroma = new Set([...colours].map((k) => k.split(',').map((x) => x * 24)).filter((c) => sat({ r: c[0], g: c[1], b: c[2] }) > 0.25)
     .map((c) => Math.round(hue({ r: c[0], g: c[1], b: c[2] }) / 30)));
+  // measure: average characters per rendered line of multi-line paragraphs
+  const lineChars = [];
+  for (const p of document.querySelectorAll('p')) {
+    const t = p.textContent.trim(); if (!vis(p) || t.length < 20) continue;
+    const r = document.createRange(); r.selectNodeContents(p);
+    const lines = new Set([...r.getClientRects()].filter((q) => q.width > 0).map((q) => Math.round(q.top / 4)));
+    if (lines.size >= 2) lineChars.push([sel(p), Math.round(t.length / lines.size)]);
+  }
   for (const k of Object.keys(tells)) tells[k].elements = uniq(tells[k].elements).slice(0, 5);
   return {
     tells,
@@ -126,6 +142,7 @@
       bodyFontSize: bfs, bodyLineHeight: isNaN(lh) ? 1.2 : lh / bfs,
       overflowX: document.documentElement.scrollWidth > innerWidth + 1,
       primaryButtons: btns.length, numericCells: nums.length, numericWithoutTabular: noTab.map(sel).slice(0, 5),
+      usedColours: [...used], usedFonts: [...usedFonts], lineChars,
       untrackedUppercase: caps.slice(0, 5), motionElements: motion,
     },
   };
