@@ -40,13 +40,13 @@ example). (D103)
 
 ## Wave 2
 
-### Step 4: The intake uses references, premium defaults and the critic. Status: TODO
+### Step 4: The intake uses references, premium defaults and the critic. Status: DONE
 Depends on: 1, 2, 3.
 Changes: `skills/questions/SKILL.md` (design step), `skills/new/SKILL.md`,
 `skills/setup/SKILL.md` (allow rule for reference_capture.py).
 (D101-D104)
 
-### Step 5: Builder and visual reviewer use the premium layer. Status: TODO
+### Step 5: Builder and visual reviewer use the premium layer. Status: DONE
 Depends on: 1, 2, 3.
 Changes: `agents/builder.md`, `agents/visual.md`, `docs/design.md`.
 (D102, D103, D105)
