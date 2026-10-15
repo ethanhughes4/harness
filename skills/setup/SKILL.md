@@ -86,6 +86,7 @@ then show the one-screen summary (see Finishing).
          "Bash(python <PLUGIN_ROOT>/scripts/gates.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/risk.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/design_audit.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/reference_capture.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/build.py*)"
        ],
        "deny": ["Bash(git push*)"]

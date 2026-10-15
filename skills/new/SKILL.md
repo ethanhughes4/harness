@@ -41,7 +41,9 @@ carry on with setup and the rest.
    docs/spec.md and docs/decisions.md. For a UI app also make the
    design exactly as the questions skill's UI step says: the agent derives
    the client's direction from the brief with the 10 per-client steps of
-   `harness:design-guideline` (D96), then the owner picks a direction
+   `harness:design-guideline` (D96), first capturing premium reference
+   sites into docs/design/reference-spec.md (D101) and passing every
+   preview through `harness:design-critic` (D103), then the owner picks a direction
    from the preview, confirms the brand sheet
    (docs/design/design-system.md) and approves the mockup. These are the only owner stops
    besides the questions themselves.

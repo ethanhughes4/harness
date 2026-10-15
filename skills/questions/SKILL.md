@@ -107,9 +107,31 @@ Settled answers go into these files, each with one heading per stage
      as an ASSUMPTION in docs/decisions.md, and write all of it into the
      brand sheet draft. Ask the owner only for a missing logo or product
      imagery (blocking: ask it in the question list, never draw one).
+  1b. Reference step (D101), after step 1 and before the directions, no
+     owner stop. Pick 3 to 5 genuinely premium products in the client's
+     category (not the competitors being differentiated from, unless they
+     are premium) plus one object or brand from outside software, each
+     with a one-line reason. For app projects prefer pages that show the
+     real product UI. Capture them:
+     `python <plugin_root>/scripts/reference_capture.py docs/design/references <name> <url> [<url>...]`
+     (plugin_root from .claude/harness.json; if it does not exist yet in
+     this intake, use the plugin folder path the new skill already has).
+     Output: `<out>/<name>/<n>/{390-<k>.png,1440-<k>.png,metrics.json}` and
+     `<out>/ranges.json`. Read the PNGs. If a site fails to load, pick
+     another. Write docs/design/reference-spec.md: per reference, what to
+     borrow (systems: type treatment, spacing rhythm, borders and depth,
+     number formatting, motion feel) and what not (assets, logos,
+     signature look); the measured ranges from
+     docs/design/references/ranges.json; and the exact target values this
+     client's design will use.
   2. Steps 7 to 9, directions: three directions, each led by a different
      adjective and from a different school, each breaking at least one
-     category convention. They must pass the difference test: display
+     category convention. Each direction names which reference systems it
+     borrows (D102); the premium spec
+     (`harness:design-guideline` `references/premium-spec.md`) defaults
+     apply unless the brand sheet overrides one with a reference or a
+     brief fact (not a recipe name). Fonts follow `references/fonts.md`
+     (D104). They must pass the difference test: display
      family differs, accent hue more than 60 degrees apart, at least one
      layout primitive differs (hero composition, grid, density). If
      not, rework. Then write docs/design/directions.html, one
@@ -133,7 +155,13 @@ Settled answers go into these files, each with one heading per stage
      - Before opening it: screenshot at 390 px and 1280 px, light and
        dark, and Read the screenshots. Fix text that wraps badly,
        overflows or collides. Run the 5-dimension critique on each
-       direction and rework any dimension under 7. Only then open it.
+       direction and rework any dimension under 7.
+     - Critique loop (D103): start `harness:design-critic` (fresh context)
+       with the screenshots, docs/design/reference-spec.md and the
+       reference screenshots; apply its top fixes and re-run, at most 3
+       rounds, keeping the best round. Open the page only if the critic
+       rated it PREMIUM; after 3 rounds open the best round and list the
+       critic's remaining notes to the owner honestly. Only then open it.
      Open it in the owner's browser (Windows: `start "" docs\design\directions.html`;
      macOS: `open`; Linux: `xdg-open`). Stop 1: the owner picks a
      direction, or asks for a mix. Resolve a mix into one coherent tile
@@ -146,7 +174,9 @@ Settled answers go into these files, each with one heading per stage
      direction with reasoning, the Design Read and dials, recipe name,
      type, palette, spacing, shape and motion tokens each with its
      reason, imagery rules, ownable assets, the signature moves, the
-     recipe's "avoid" list, the target word list. Add a "UX rules"
+     recipe's "avoid" list, the target word list. Add a "References" section (names, urls, what
+     is borrowed from each) and a "Fonts and licences" line: each font's
+     licence and whether it may be bundled (D104). Add a "UX rules"
      section (D91): the ui-ux-pro-max rules this app must meet, by
      priority, one line each. Add a "Justified exceptions" section: each
      Never item (N1 to N19) the design uses, as `N<k>: <reason naming
@@ -165,7 +195,12 @@ Settled answers go into these files, each with one heading per stage
      recipe; never pass `--persist`. Check the mockup against its
      `references/pro-rules.md` pre-delivery checklist and against the
      guideline's checks, run the 5-dimension critique yourself and fix
-     anything under 7. Stop 3: the owner approves or asks for changes
+     anything under 7. Then run the critique loop above on the mockup
+     (`harness:design-critic` with screenshots, reference-spec.md and the
+     reference screenshots; 3 rounds at most, best round kept) and run
+     `python <plugin_root>/scripts/design_audit.py <url> --compare docs/design/references/ranges.json`
+     on it. Show the owner only a mockup rated PREMIUM, or the best of 3
+     rounds with the critic's remaining notes. Stop 3: the owner approves or asks for changes
      (its Checkpoint 2).
   Then write docs/design/tokens.md, the flat list (every colour, font,
   size, spacing, radius, shadow and motion value, one per line, as CSS
