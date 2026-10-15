@@ -53,8 +53,17 @@ NEEDS_CONTEXT.
 Before reporting DONE on a ui feature (D97): start the app from `run` in
 `.claude/harness.json`, then for each page of the feature run
 `python <plugin_root>/scripts/design_audit.py <url> --sheet docs/design/design-system.md`
-(`plugin_root` is in `.claude/harness.json`, D35) and fix every fail it
-reports. Stop the app afterwards, also when a step failed.
+(`plugin_root` is in `.claude/harness.json`, D35), adding
+`--compare docs/design/references/ranges.json` if that file exists. Fix
+every fail and every premium warn the sheet does not justify. Stop the
+app afterwards, also when a step failed.
+
+Premium layer (D100-D103): apply the defaults in
+`skills/design-guideline/references/premium-spec.md` unless the brand sheet
+overrides them, and build from the values in
+`docs/design/reference-spec.md` as well as the sheet and tokens. Build the
+interaction details the spec lists, not just the static look: the press
+state, enter and exit motion, loading timing and focus.
 
 You may be sent a message later with review findings or a failing gate
 output. Fix exactly those, in the same folder, run the tests again,
