@@ -101,7 +101,7 @@ Run one job per picked feature, all in the same message where you can
    it needs exists. If one is missing, ask that reviewer again; never
    write a review yourself. Read each file. Any CHANGES goes to Rework.
 7. Merge or stop. All PASS and gates green:
-   - risk low: `git merge --no-ff factory/<id>` on the main branch, then
+   - risk low or high: `git merge --no-ff factory/<id>` on the main branch, then
      run every `test` command (one at a time). Green: status done,
      `git add -A` and `git commit` (the merge commit already exists;
      commit the job files and the status), then
@@ -110,8 +110,9 @@ Run one job per picked feature, all in the same message where you can
      test output as the findings. Conflict in a shared list where each
      side added a line: keep every line. Any other conflict:
      `git merge --abort` and Rework.
-   - risk high: status needs-human, keep the branch and worktree. Say
-     why in `decision.md`.
+   - If risk was high, also write in `decision.md`: "High risk, merged
+     automatically after all reviewers passed. Risky files: <files>",
+     so the owner can check it later in the report.
 
 ## Rework
 
