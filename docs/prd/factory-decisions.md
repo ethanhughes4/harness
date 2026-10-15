@@ -322,3 +322,49 @@ D99: Python Playwright 1.64 was installed on this PC (2026-10-14); Node
 Playwright existed only in the npx cache, so agents' `require('playwright')`
 would have failed and sent every UI job to needs-human. Setup installs
 Python Playwright for Python UI projects after the owner says yes (D78).
+
+## Premium layer (2026-10-15)
+
+D100: Avoiding AI tells only reaches "competent"; premium is a separate
+layer. Source: reports/What makes sites look premium.md ("Changes to the
+pipeline"). The owner judged Pocket's Instrument mockup, which passed every
+check, still AI-made. This layer applies to every client.
+
+D101: Reference step. Before directions, the intake picks 3-5 premium
+products in the client's category plus one object or brand from outside
+software, captures the same screen types the app needs with
+`scripts/reference_capture.py` (screenshots at 390 and 1440 px plus the
+audit's measured values), and writes docs/design/reference-spec.md with
+exact, checkable values and what to borrow (systems) vs not (assets,
+signature look). Directions derive from the references. A fresh-model test
+checks the result is not a copy (it must not name the reference).
+
+D102: Premium spec. skills/design-guideline/references/premium-spec.md
+holds sourced defaults (size-dependent tracking, in-between weights with
+large type lighter, off-black text and off-white or tinted backgrounds,
+1px alpha ring borders, layered low-opacity shadows, nested radii, one
+ease-out curve and 2-3 durations, press/enter/exit states, loading timing,
+tabular figures, text-wrap, focus). They apply unless the brand sheet
+overrides one by naming a reference or brief fact that shows the
+alternative working. Recipe names are not reasons.
+
+D103: Critique loop. A separate `harness:design-critic` agent (fresh
+context) judges previews, mockups and built UI against the matching
+reference screens pairwise in both orders, points at regions with cropped
+screenshots, scores several named dimensions, and runs at most 3 rounds,
+keeping the best. It is calibrated with Pocket's Instrument mockup as the
+"competent but generic" example (stored in the guideline skill). The
+visual reviewer uses it for the judgement part.
+
+D104: Fonts for client work: references/fonts.md in the guideline skill
+lists free commercial-licence faces that read premium and are not
+overused, the overused ones to avoid (Clash Display, Satoshi, and the
+next-defaults list), never Pangram Pangram freebies on client sites, and
+when to recommend a paid licence (with a shortlist). Bundling terms must
+be checked per font for offline apps; the brand sheet records the licence.
+
+D105: The design audit gains the report's premium checks (tracking by size,
+pure black/white text, opaque vs alpha borders, shadow layering, easing and
+duration count, text-wrap, figures, punctuation, nested radii, press state,
+colourfulness), and a compare mode that reports a page's values against a
+reference-spec range.
