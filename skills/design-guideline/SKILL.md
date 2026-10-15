@@ -86,6 +86,69 @@ recorded reason passes. One tell is weak evidence. Co-occurrence is the signal.
 | A16 | Real content and imagery | Real product screenshots, client copy and real data, or labelled placeholders; never invented | C |
 | A17 | Specific copy | H1 names what the product does for whom; sentence case; active-verb buttons ("Save changes", not "Submit"); errors say what went wrong and how to fix it | C |
 
+## Premium layer (D100-D104)
+
+Source: `reports/What makes sites look premium.md`, "Changes to the pipeline".
+
+**Why (D100).** Removing the tells only reaches "competent". Pocket's Instrument mockup
+passed every check and still read as AI-made, because the guideline measures what is absent.
+Premium is a separate layer of exact craft values that premium products share and that can
+be measured (tracking that follows size, off-black on off-white, alpha ring borders, layered
+tinted shadows, one ease-out curve). It applies to every client. The brand sheet turned a
+recipe name into literal words and never measured a reference.
+
+**Reference step (D101).** Between Step 5 (competitor audit) and Step 7 (directions):
+- Pick 3-5 premium products in or next to the client's category (Apple Design Award or
+  Editor's Choice apps, Typewolf Site of the Day, products in the teardowns) and 1 object or
+  brand from outside software that matches the brand. Record why each is premium for this
+  brief. Competitors show what to break; references show what quality to reach.
+- Capture the same screen types the app needs with
+  `python scripts/reference_capture.py <name> <url>...`: screenshots at 390 and 1440 px plus
+  the audit's measured values. Where a page blocks bots, use vision extraction and mark the
+  values "estimated".
+- Write `docs/design/reference-spec.md`: one table per reference with exact, checkable
+  values, then a "client uses" column that picks a value per property and names the
+  reference it came from. "1px ring at 8% alpha", not "subtle borders".
+- **Borrow systems, not assets.** Borrow tracking curve, weight strategy, line-height ladder,
+  border and shadow recipes, easing and durations, spacing rhythm, figure formatting, state
+  and loading patterns. Do not borrow logos, licensed fonts, brand hues, illustrations, copy
+  or a reference's signature move (Stripe mesh, Vercel grid, Linear's dark glow). Craft
+  values from several references, identity from the brief.
+- Directions (Step 7) derive from the references, not from recipe names.
+- Fresh-model test on the result: show the finished screen with no context and ask "which
+  product does this resemble?" If it can name one reference, too much was copied. If it
+  names an AI builder, too little craft was applied.
+
+**Premium spec and override rule (D102).** `references/premium-spec.md` holds the sourced
+default values: text and ground colours, tracking by size, in-between weights with large type
+lighter, line height, `text-wrap`, figures, ring borders, layered tinted shadows, nested
+radii, one ease-out curve and 2-3 durations, press/enter/exit states, loading timing, focus.
+They apply unless the brand sheet overrides one by **naming a reference or brief fact that
+shows the alternative working**. A recipe name is not a reason. A client value outside the
+reference spec's range also needs a recorded reason. Add "refined" or "crafted" to the target
+word list and "basic" or "unfinished" to its opposites.
+
+**Critique loop (D103).** Judgement of previews, mockups and built UI goes to the separate
+`harness:design-critic` agent, in a fresh context. It sees only screenshots, the brand sheet,
+the reference spec and the reference screenshots, never the builder's reasoning.
+- Pairwise against the matching reference screen, per screen type, in both orders; keep only
+  issues raised in both orders.
+- Each issue points at a region with a cropped screenshot, a measured value where possible
+  ("h2 at 20px has 0 tracking; spec says -0.01em") and the fix value from the spec.
+- Scores several named dimensions as separate judgements: type setting, colour restraint,
+  depth and borders, spacing and focal point, states and motion, coherence, adjective fit.
+- Scripts run first and gate; the critic sees only pages that pass them.
+- At most 3 rounds, fix the top 3 issues per round, keep the best round by both-order
+  pairwise comparison, not the last. Re-run the audit each round. No "make it bolder"
+  instructions. On a plateau, change direction rather than polish.
+- Calibrated with few-shot examples in `references/calibration/`: Pocket's Instrument
+  mockup is the "competent but generic" example, with the report's critique of it.
+
+**Fonts (D104).** `references/fonts.md`: free commercial-licence faces that read premium,
+overused faces to avoid (Clash Display, Satoshi, the next-defaults list), never Pangram
+Pangram freebies on client sites, and when to recommend a paid licence. Bundling terms are
+checked per font; the brand sheet records the licence.
+
 ## Per client: from brief to a distinct direction
 
 `docs/design/design-system.md` IS the brand sheet (D96). Steps 1-10 end by writing it.
