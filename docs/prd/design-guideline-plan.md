@@ -38,7 +38,7 @@ projects; allow rule for design_audit.py). (D96, D99)
 
 ## Wave 2
 
-### Step 4: Builder and visual reviewer use the guideline. Status: TODO
+### Step 4: Builder and visual reviewer use the guideline. Status: DONE
 Depends on: 1, 2.
 After it: the builder builds only from the brand sheet and runs the audit
 before DONE; the visual reviewer runs the audit as a hard gate, then judges
