@@ -1,7 +1,9 @@
-"""python design_audit.py <url> [--sheet docs/design/design-system.md] [--tokens FILE] [--json-out FILE]
+"""python design_audit.py <url> [--sheet docs/design/design-system.md] [--tokens FILE] [--json-out FILE] [--compare RANGES.json]
 
 Audits a running page at 360, 768 and 1440 px (computed styles, no AI) and prints JSON
 {"result": "pass"|"review"|"fail", "fails", "warns", "tells", "metrics"}. Exit 0 pass/review, 1 fail, 3 no Playwright.
+Premium checks (premium report D1-D10) are warns under "premium"; colourfulness (D14) is not computed (needs pixels).
+--compare reads {"metric": [min, max]} and reports each page value under "compare"; out of range is a warn.
 A tell whose N-number has a reason line "N3: <reason>" in the sheet is justified (D96).
 """
 import argparse
@@ -29,6 +31,13 @@ def focus_pass(page):
         if i >= 0 and style == base[i]:
             bad.append(name)
     return sorted(set(bad))
+
+
+def flat(m, premium):
+    """Numeric audit values by name (the metrics --compare and reference_capture.py use)."""
+    d = {k: v for k, v in {**m, **premium}.items() if isinstance(v, (int, float)) and not isinstance(v, bool)}
+    d.update({"fontSizes": len(m["fontSizes"]), "fontWeights": len(m["fontWeights"]), "radii": len(m["radii"]), "shadows": len(m["shadows"])})
+    return d
 
 
 def justified(sheet):
@@ -82,6 +91,7 @@ def main():
     ap.add_argument("--sheet")
     ap.add_argument("--tokens", help="tokens.md (default: tokens.md next to the sheet, if it exists)")
     ap.add_argument("--json-out")
+    ap.add_argument("--compare", help="JSON {metric: [min, max]} reference range")
     a = ap.parse_args()
     try:
         from playwright.sync_api import sync_playwright
@@ -90,7 +100,7 @@ def main():
         return 3
     with open(os.path.join(HERE, "design_audit.js"), encoding="utf-8") as f:
         js = f.read()
-    tells, metrics, overflow = {}, None, []
+    tells, metrics, premium, overflow = {}, None, None, []
     with sync_playwright() as p:
         b = p.chromium.launch()
         for w in WIDTHS:
@@ -104,7 +114,7 @@ def main():
                 t = tells.setdefault(k, {"why": v["why"], "elements": []})
                 t["elements"] = sorted(set(t["elements"] + v["elements"]))[:5]
             if w == WIDTHS[-1]:
-                metrics = r["metrics"]
+                metrics, premium = r["metrics"], r["premium"]
                 nofocus = focus_pass(pg)
             pg.close()
         ctx = b.new_context(viewport={"width": 1440, "height": 900}, reduced_motion="reduce")
@@ -151,10 +161,21 @@ def main():
     ]
     checks.append((bool(m["lineChars"]) and any(not 45 <= n <= 90 for _, n in m["lineChars"]),
                    f"paragraph line length outside 45-90 characters at 1440 px: {[x for x in m['lineChars'] if not 45 <= x[1] <= 90][:5]}"))
-    warns = [msg for bad, msg in checks if bad]
+    warns = [msg for bad, msg in checks if bad] + premium["warns"]
+    compare = {}
+    if a.compare:
+        with open(a.compare, encoding="utf-8") as f:
+            ranges = json.load(f)
+        vals = flat(m, premium)
+        for k, (lo, hi) in ranges.items():
+            if vals.get(k) is not None:
+                compare[k] = {"value": vals[k], "range": [lo, hi], "in_range": lo <= vals[k] <= hi}
+        warns += [f"{k} {c['value']:.4g} outside reference range {c['range']}" for k, c in compare.items() if not c["in_range"]]
     result = "fail" if fails else "review" if len(unj) >= 2 else "pass"
     out = {"result": result, "fails": fails, "warns": warns,
-           "tells": {k: {**v, "justified": k in ok} for k, v in tells.items()}, "metrics": m}
+           "tells": {k: {**v, "justified": k in ok} for k, v in tells.items()}, "metrics": m, "premium": premium}
+    if a.compare:
+        out["compare"] = compare
     text = json.dumps(out, indent=2)
     if a.json_out:
         with open(a.json_out, "w", encoding="utf-8") as f:

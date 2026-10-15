@@ -71,3 +71,49 @@ def test_measure_warns(tmp_path):
     assert any("line length" in w for w in out["warns"])
     out = run(page(tmp_path, "p{margin:0;max-width:34em}", f"<p>{long}</p>"))
     assert not any("line length" in w for w in out["warns"])
+
+
+def fixture_url(name):
+    return "file:///" + os.path.join(FIX, name).replace("\\", "/")
+
+
+def test_premium_page_has_no_premium_warns():
+    pytest.importorskip("playwright")
+    _, out = audit("premium.html")
+    assert out["premium"]["warns"] == [], out["premium"]["warns"]
+    assert out["premium"]["shadowLayers"] == 3 and out["premium"]["easingCurves"] == 1
+
+
+def test_competent_page_raises_premium_warns():
+    pytest.importorskip("playwright")
+    _, out = audit("competent.html")
+    w = " ".join(out["premium"]["warns"])
+    for key in ("tracking", "pure", "opaque", "single-layer", "easing curves", "durations", "text-wrap", "quotes", "nested radius", ":active"):
+        assert key in w, (key, w)
+    assert set(out["premium"]["warns"]) <= set(out["warns"])
+
+
+def test_compare_flags_out_of_range(tmp_path):
+    pytest.importorskip("playwright")
+    rng = tmp_path / "r.json"
+    rng.write_text(json.dumps({"headingWeight": [300, 500], "shadowLayers": [2, 3], "bodyTracking": [-0.02, -0.005]}))
+    _, ok = audit("premium.html", "--compare", str(rng))
+    assert ok["compare"]["headingWeight"]["in_range"] and ok["compare"]["shadowLayers"]["in_range"]
+    assert not ok["compare"]["bodyTracking"]["in_range"] and any("bodyTracking" in w for w in ok["warns"])
+    _, bad = audit("competent.html", "--compare", str(rng))
+    assert not bad["compare"]["headingWeight"]["in_range"] and not bad["compare"]["shadowLayers"]["in_range"]
+
+
+def test_reference_capture(tmp_path):
+    pytest.importorskip("playwright")
+    cap = os.path.join(HERE, "..", "scripts", "reference_capture.py")
+    r = subprocess.run([sys.executable, cap, str(tmp_path), "ref", fixture_url("premium.html"), fixture_url("competent.html"),
+                        "file:///nonexistent/x.html"], capture_output=True, text=True, timeout=200)
+    assert r.returncode == 0, r.stderr
+    for n in ("1", "2"):
+        assert (tmp_path / "ref" / n / "390.png").exists() and (tmp_path / "ref" / n / "1440.png").exists()
+    assert "error" in json.loads((tmp_path / "ref" / "3" / "metrics.json").read_text())
+    rng = json.loads((tmp_path / "ranges.json").read_text())
+    assert rng["headingWeight"] == [450, 700] and rng["shadowLayers"] == [1, 3]
+    _, out = audit("premium.html", "--compare", str(tmp_path / "ranges.json"))
+    assert all(c["in_range"] for c in out["compare"].values())
