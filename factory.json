@@ -1,7 +1,7 @@
 {
   "reviewers": [
     {"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false},
-    {"name": "security", "agent": "harness:security", "when": "high_risk", "browser": false},
+    {"name": "security", "agent": "harness:security", "when": "always", "browser": false},
     {"name": "user", "agent": "harness:user-tester", "when": "ui", "browser": true},
     {"name": "visual", "agent": "harness:visual", "when": "ui", "browser": true}
   ]
