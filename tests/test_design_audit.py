@@ -111,7 +111,7 @@ def test_reference_capture(tmp_path):
                         "file:///nonexistent/x.html"], capture_output=True, text=True, timeout=200)
     assert r.returncode == 0, r.stderr
     for n in ("1", "2"):
-        assert (tmp_path / "ref" / n / "390.png").exists() and (tmp_path / "ref" / n / "1440.png").exists()
+        assert (tmp_path / "ref" / n / "390-1.png").exists() and (tmp_path / "ref" / n / "1440-1.png").exists()
     assert "error" in json.loads((tmp_path / "ref" / "3" / "metrics.json").read_text())
     rng = json.loads((tmp_path / "ranges.json").read_text())
     assert rng["headingWeight"] == [450, 700] and rng["shadowLayers"] == [1, 3]

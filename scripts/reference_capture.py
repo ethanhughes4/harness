@@ -1,6 +1,6 @@
 """python reference_capture.py <out_dir> <name> <url> [<url>...]
 
-For each url: screenshots at 390 and 1440 px (full page, capped at 6000 px) into <out_dir>/<name>/, runs
+For each url: one screenshot per screenful while scrolling (up to 8) at 390 and 1440 px, named <width>-<n>.png, into <out_dir>/<name>/, runs
 design_audit.js at 1440 px and saves <out_dir>/<name>/<n>/metrics.json (or {"error": ...} if the url fails).
 Then rewrites <out_dir>/ranges.json: {metric: [min, max]} across every metrics.json under <out_dir>
 (the file `design_audit.py --compare` reads). Exit 0, 3 no Playwright.
@@ -11,7 +11,7 @@ import sys
 
 from design_audit import HERE, flat
 
-CAP = 6000
+FRAMES = 8  # screenfuls captured per width
 
 
 def main(argv):
@@ -34,12 +34,20 @@ def main(argv):
             res = {"url": url}
             try:
                 for w in (390, 1440):
-                    pg = b.new_page(viewport={"width": w, "height": 900})
+                    vh = 844 if w == 390 else 900
+                    pg = b.new_page(viewport={"width": w, "height": vh})
                     pg.goto(url, timeout=30000)
-                    pg.wait_for_timeout(500)
-                    h = pg.evaluate("document.documentElement.scrollHeight")
-                    pg.set_viewport_size({"width": w, "height": min(h, CAP)})
-                    pg.screenshot(path=os.path.join(d, f"{w}.png"), clip={"x": 0, "y": 0, "width": w, "height": min(h, CAP)})
+                    pg.wait_for_timeout(800)
+                    # one screenshot per screenful as a person scrolls: scroll-driven and pinned sections
+                    # only exist in the viewport, so a single full-page image misses them
+                    for k in range(FRAMES):
+                        pg.evaluate(f"window.scrollTo(0, {k * vh})")
+                        pg.wait_for_timeout(600)
+                        pg.screenshot(path=os.path.join(d, f"{w}-{k + 1}.png"))
+                        if pg.evaluate(f"window.scrollY + {vh} >= document.documentElement.scrollHeight - 2"):
+                            break
+                    pg.evaluate("window.scrollTo(0, 0)")
+                    pg.wait_for_timeout(300)
                     if w == 1440:
                         r = pg.evaluate(js)
                         res.update(metrics=flat(r["metrics"], r["premium"]), premium_warns=r["premium"]["warns"])

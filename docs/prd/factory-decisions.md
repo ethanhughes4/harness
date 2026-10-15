@@ -368,3 +368,10 @@ pure black/white text, opaque vs alpha borders, shadow layering, easing and
 duration count, text-wrap, figures, punctuation, nested radii, press state,
 colourfulness), and a compare mode that reports a page's values against a
 reference-spec range.
+
+D106: reference_capture.py takes one screenshot per screenful while
+scrolling (up to 8 per width, named <width>-<n>.png) instead of one tall
+image. Premium sites such as Mercury pin sections and animate them in on
+scroll, so a full-page screenshot showed only the hero and a background
+image; per-screen captures show the real product UI. (live check
+2026-10-15 on mercury.com and linear.app)

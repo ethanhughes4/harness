@@ -9,7 +9,7 @@ No shared list; steps touch different files.
 
 ## Wave 1
 
-### Step 1: Premium spec and fonts in the guideline skill. Status: TODO
+### Step 1: Premium spec and fonts in the guideline skill. Status: DONE
 Depends on: none.
 After it: `harness:design-guideline` carries the premium layer: the
 reference step, premium defaults, the critique loop and font guidance.
@@ -19,7 +19,7 @@ Changes: `skills/design-guideline/SKILL.md` (a "Premium layer" section:
 what it is, D100-D104, the override rule, pointers), `skills/design-guideline/SOURCE.md`.
 (D100, D101, D102, D104)
 
-### Step 2: Audit premium checks and reference capture. Status: TODO
+### Step 2: Audit premium checks and reference capture. Status: DONE
 Depends on: none.
 After it: the audit reports premium checks; `reference_capture.py <name>
 <url>...` saves screenshots and measured values of reference pages;
@@ -29,7 +29,7 @@ Creates: `scripts/reference_capture.py`, fixtures and tests.
 Changes: `scripts/design_audit.js`, `scripts/design_audit.py`,
 `tests/test_design_audit.py`. (D101, D105)
 
-### Step 3: The design critic. Status: TODO
+### Step 3: The design critic. Status: DONE
 Depends on: none.
 After it: `harness:design-critic` judges a design against references and
 the calibration example.
