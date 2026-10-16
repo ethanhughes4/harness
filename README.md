@@ -1,14 +1,16 @@
 # Harness
 
-**An AI-powered software development harness for Claude Code.**
+**From idea to application, with a structured AI development workflow.**
 
-Harness turns an application idea into a structured software development process. It coordinates planning skills, builder agents, automated tests, specialised reviewers and controlled integration to help build applications in manageable, verifiable stages.
+Harness is a software development orchestrator built for Claude Code. It coordinates the process of turning application requirements into working software, from initial planning and feature breakdown through implementation, testing, code review and controlled integration.
 
-Instead of asking an AI to build an entire application in one long conversation, Harness breaks the work into features, checks the results, reviews completed work in batches, and keeps track of progress throughout development.
+Rather than asking an AI to build an entire application in one go, Harness organises development into manageable features, runs automated checks, coordinates specialised reviews and directs failed work back for targeted fixes.
 
-Its goal is to make AI-assisted software development more organised, reliable and cost-efficient.
+Its approach combines modular skills, specialised agents, automated verification and risk-based approval rules. Compatible features can be reviewed in batches to reduce repeated AI calls, while each feature retains its own test results, review verdict and integration path.
 
-## What Does Harness Do?
+The goal is simple: make AI-assisted software development more structured, traceable and efficient without sacrificing control over the code being produced.
+
+## What Does It Do?
 
 - **Requirements discovery:** Uses a questions skill to understand what the user wants to build.
 - **Requirements validation:** Checks the answers for missing information, contradictions and unclear requirements before development begins.
