@@ -1,7 +1,11 @@
 """PreToolUse hook (Edit|Write|Bash): block changes to feature_list.json and `protected` paths.
 
 Blocks with exit 2 and the reason on stderr. Only scripts/mark_pass.py and scripts/status.py may change
-the list (D17, D68). The builder may not touch the acceptance tests folder (D60). A reviewer agent listed in factory.json may write only its own review file (D64).
+the list (D17, D68), and scripts/init_features.py may add features to it, but only from the interactive
+session: a call from any subagent or --agent session (agent_type set, D56) is blocked (D107). The
+organiser may not run `git merge`: it merges through scripts/merge.py, which refuses high risk (D108).
+The builder may not touch the acceptance tests folder (D60). A reviewer agent listed in factory.json may write
+only its own review file (D64).
 """
 import fnmatch
 import json
@@ -16,6 +20,9 @@ LIST = "feature_list.json"
 # a lone `python <path>mark_pass.py <id>`: no shell operators outside quotes
 MARK_PASS = re.compile(r'\s*python3?(\.exe)?\s+("[^"$`]*"|[^\s;&|<>`$"]+)mark_pass\.py\s+[\w.-]+\s*')
 STATUS = re.compile(r'\s*python3?(\.exe)?\s+("[^"$`]*"|[^\s;&|<>`$"]+)status\.py\s+[\w.-]+\s+[a-z-]+\s*')
+INIT = re.compile(r'\s*python3?(\.exe)?\s+("[^"$`]*init_features\.py"|[^\s;&|<>`$"]*init_features\.py)'
+                  r'\s+--(check|apply)\s+init-features-candidate\.tmp\s*')
+GIT_MERGE = re.compile(r"(?:^|[;&|(]\s*)git\s+merge\b")
 REVIEW = re.compile(r"\.harness/jobs/[\w.-]+/round-\d+/review-([\w.-]+)\.md")
 
 
@@ -53,8 +60,10 @@ def blocked_path(path, cwd, protected):
     return path == LIST or any(fnmatch.fnmatch(path, g) for g in protected)
 
 
-def blocked_command(cmd, protected):
+def blocked_command(cmd, protected, agent=None):
     cmd = cmd.replace("\\", "/")
+    if "init_features" in cmd:  # only the exact call, only from the interactive session
+        return bool(agent) or not INIT.fullmatch(cmd)
     if MARK_PASS.fullmatch(cmd) or STATUS.fullmatch(cmd):
         return False
     # ponytail: substring match on each glob's literal prefix; over-blocks, and misses
@@ -94,12 +103,17 @@ def main():
     if tool in ("Edit", "Write"):
         hit = blocked_path(inp.get("file_path", ""), cwd, protected)
     elif tool == "Bash":
-        hit = blocked_command(inp.get("command", ""), protected)
+        if data.get("agent_type") == "harness:organiser" and GIT_MERGE.search(inp.get("command", "")):
+            print("Blocked: the organiser merges only with python <plugin_root>/scripts/merge.py <id> <round>.",
+                  file=sys.stderr)
+            return 2
+        hit = blocked_command(inp.get("command", ""), protected, data.get("agent_type"))
     else:
         return 0
     if hit:
         print(f"Blocked: {LIST} and protected paths can't be changed directly. "
-              f"Use: python <plugin_root>/scripts/mark_pass.py <id> or status.py <id> <status>", file=sys.stderr)
+              f"Use: python <plugin_root>/scripts/mark_pass.py <id> or status.py <id> <status>; "
+              f"new features go through init_features.py (interactive session only)", file=sys.stderr)
         return 2
     return 0
 

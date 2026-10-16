@@ -19,18 +19,26 @@ def classify(files, globs):
     return {"risk": "high" if hit else "low", "files": hit}
 
 
+def assess(fid):
+    """{"risk", "files"} for branch factory/<fid>; raises RuntimeError if the diff fails."""
+    # the branch the project has checked out is the one jobs merge into; never guess "main"
+    base = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip() or "HEAD"
+    r = git("diff", "--name-only", f"{base}...factory/{fid}")
+    if r.returncode:
+        raise RuntimeError(f"cannot diff {base}...factory/{fid}: {r.stderr.strip()}")
+    files = [f.replace("\\", "/") for f in r.stdout.splitlines() if f]
+    return classify(files, setting(config(os.getcwd()), "risky"))
+
+
 def main(argv):
     if len(argv) != 2:
         print("usage: risk.py <id>", file=sys.stderr)
         return 1
-    # the branch the project has checked out is the one jobs merge into; never guess "main"
-    base = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip() or "HEAD"
-    r = git("diff", "--name-only", f"{base}...factory/{argv[1]}")
-    if r.returncode:
-        print(f"cannot diff {base}...factory/{argv[1]}: {r.stderr.strip()}", file=sys.stderr)
+    try:
+        print(json.dumps(assess(argv[1])))
+    except RuntimeError as e:
+        print(e, file=sys.stderr)
         return 1
-    files = [f.replace("\\", "/") for f in r.stdout.split("\n") if f]
-    print(json.dumps(classify(files, setting(config(os.getcwd()), "risky"))))
     return 0
 
 

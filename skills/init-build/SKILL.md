@@ -56,7 +56,41 @@ Each feature is one object in a JSON list:
   spec. When done, list each spec requirement against the feature that
   holds it; if one has none, add a feature.
 
-Write the list with 2-space indentation.
+## Writing the list: propose, validate, approve, apply, verify
+
+A hook blocks Write, Edit and any Bash command on `feature_list.json`,
+so you never touch it directly. You add features through
+`init_features.py`, which works only from this interactive session (a
+subagent, including the builder and the organiser, is refused by the
+hook). It handles a new list and an append to an existing one the same
+way, and it never changes an existing feature.
+
+1. Propose. Write ONLY the new features, as a JSON list in the exact
+   shape above, to `init-features-candidate.tmp` at the project root
+   (with Write; that name and place are the only ones accepted). Do not
+   copy the existing features into it. Every new feature has
+   `"status": "todo"` and `"passes": false`; ids must not exist yet.
+   A feature may depend on an existing feature or on another one in the
+   same file.
+2. Validate. Run
+   `python "<plugin_root>/scripts/init_features.py" --check init-features-candidate.tmp`
+   It changes nothing. On "Feature validation failed: ..." fix the
+   candidate file (not the list) and run it again until it prints
+   "Check complete. No changes were made." It rejects bad JSON, a
+   missing field, a duplicate or already used id, an unknown or self
+   dependency, a dependency cycle, and any status other than `todo` or
+   `passes` other than false.
+3. Approve. Show the owner each id, title and `depends_on` from the
+   check output, and ask: "Is anything missing or wrong?" Change only
+   what they dispute, in the candidate file, and run step 2 again. Run
+   from `new` there is no separate stop: show the summary and go on.
+   Do not apply before the owner has approved.
+4. Apply. Run the same command with `--apply` in place of `--check`.
+   It validates again and replaces `feature_list.json` in one step, so
+   a failure leaves the old list intact.
+5. Verify. Read `feature_list.json` with Read: every proposed id is
+   there, in order, after the old ones, with status `todo`. Then delete
+   `init-features-candidate.tmp` (it is git-ignored).
 
 ## Other files
 
@@ -72,17 +106,18 @@ Write the list with 2-space indentation.
    build-log.jsonl, and stops by itself; a rerun resumes from the files.
    If build.cmd exists and differs, show the owner the difference and
    keep it unless they say to replace it.
-3. Add `build-log.jsonl` and `.harness/wt/` to .gitignore.
+3. Add `build-log.jsonl`, `.harness/wt/` and `init-features-candidate.tmp`
+   to .gitignore.
 
 ## Finishing
 
-1. Check feature_list.json parses, ids are unique, every `depends_on`
-   id exists, every `passes` is false and every `status` is `todo`.
-2. Show the owner the features (id, title, depends_on) and ask: "Is
-   anything missing or wrong?" Change only what they dispute.
-3. Then run `git add -A` and `git commit -m "Init build: <stage>"`.
-   Do not push.
+1. Check the list as step 5 says: every `depends_on` id exists, every
+   `passes` is false and every `status` is `todo` (init_features.py
+   already enforced this; the read is your check that it was applied).
+2. Make sure the owner approved the features (step 3).
+3. Then run `git add -A` and `git commit -m "Init build: <stage>"`. Do
+   not push.
 4. Tell the owner: run build.cmd to start the build.
 
-If you cannot write files, print the feature_list.json you would write
-instead.
+If you cannot run `init_features.py`, stop and tell the owner why; do
+not write the list by another route.

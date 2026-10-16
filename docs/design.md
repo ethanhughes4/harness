@@ -65,7 +65,9 @@ test writer -> builder -> gates -> risk -> reviewers -> merge
 | Gates | `scripts/gates.py <id> <round>` | No AI. Runs every `test` command, every `gates` command and the tamper check. Output is capped at 100 lines and written to `gates-<round>.md`. Any failure goes straight back to the builder |
 | Risk | `scripts/risk.py <id>` | Prints `{"risk": "low"\|"high", "files": [...]}` from the files changed against main |
 | Reviewers | listed in `factory.json` | Run when their `when` says so. Each writes `round-<n>/review-<name>.md` starting `VERDICT: PASS` or `VERDICT: CHANGES` |
-| Merge | organiser | Low risk and every review PASS: `git merge --no-ff`, run every `test` command. Green: status `done`. Red: reset to before the merge and rework. High risk: status `needs-human`, branch kept |
+| Merge | `scripts/merge.py <id> <round>` | The only merge (the guard blocks the organiser's own `git merge`). Needs green gates and every needed review PASS. Low risk: `git merge --no-ff`, run every `test` command; green: status `done`; red: merge undone and rework. High risk: never merged, status `needs-human`, reason in `decision.md`, branch and worktree kept for `/harness:approve` |
+
+**Batch review.** The organiser builds up to `max_builders` jobs and runs each one's gates and risk. When all are past their gates, the `code` reviewer (`batch: true` in `factory.json`) reviews them in one call: shared context read once, one review file and one verdict per job. Passing jobs merge at once; only jobs with CHANGES are reworked and reviewed again.
 
 **Waiting.** A round is done only when every review file it needs exists. Browser reviewers of one job run one after the other. The others run in parallel with them.
 
@@ -81,8 +83,8 @@ test writer -> builder -> gates -> risk -> reviewers -> merge
 | --- | --- | --- | --- | --- | --- |
 | `code` | `harness:reviewer` | opus | Always | The diff against the spec, decisions and `docs/architecture.md`, then correctness | A finding that cites a failing test or a concrete fix |
 | `security` | `harness:security` | opus | High risk | The changed files only | A concrete exploit path or fix |
-| `user` | `harness:user-tester` | sonnet | UI features | Starts the app and uses it in a browser: the feature's steps, obvious wrong inputs, console errors, with screenshots | A step that fails or a broken flow, shown by a screenshot or an error |
-| `visual` | `harness:visual` | sonnet | UI features | Screenshots at 1280 px and 390 px wide, light and dark, against `docs/design/` and its tokens, plus an axe accessibility scan | Broken layout, overflow, wrong tokens, failed contrast, missing focus or loading states, a clear mockup mismatch. Taste is a note |
+| `user` | `harness:user-tester` | sonnet | Milestones (whole app) | Starts the app and uses it in a browser: the feature's steps, obvious wrong inputs, console errors, with screenshots | A step that fails or a broken flow, shown by a screenshot or an error |
+| `visual` | `harness:visual` | sonnet | Milestones (whole app) | Screenshots at 1280 px and 390 px wide, light and dark, against `docs/design/` and its tokens, plus an axe accessibility scan | Broken layout, overflow, wrong tokens, failed contrast, missing focus or loading states, a clear mockup mismatch. Taste is a note |
 
 **Design guideline (D95-D98).** The skill `harness:design-guideline` holds the tells to avoid (N1-N19), the rules to follow (A1-A17) and the ten per-client steps; it wins over the two vendored design skills where they disagree, and the brand sheet `docs/design/design-system.md` is its output. The builder builds only from the sheet and tokens and runs `scripts/design_audit.py` (computed styles at 360, 768 and 1440 px, token drift, tell score, focus and reduced-motion passes) before DONE. The visual reviewer treats an audit fail as a hard gate, then acts as a separate screenshot judge with narrow questions (word-list pick, one yes/no per recorded reason, pairwise against the previous round in both orders) and gives no absolute taste scores.
 
@@ -90,7 +92,7 @@ test writer -> builder -> gates -> risk -> reviewers -> merge
 
 `user` and `visual` have `browser: true` in `factory.json`. A reviewer may write only its own review file; the guard enforces this by agent type.
 
-**Milestone walkthrough.** Every `walkthrough_every` merged UI features (default 5), and once when nothing is left to build, the organiser runs each browser reviewer on the whole app on the main branch. Findings go to `progress.md` and the report as needs-human items. Features can pass alone and still fail together.
+**Milestone walkthrough.** Every `walkthrough_every` merged UI features (default 5), and once when nothing is left to build, the organiser runs each `milestone` reviewer (`user`, `visual`) on the whole app on the main branch; the final one is the whole-app check at the end. Feature-level acceptance tests and gates still run on every feature, and a milestone reviewer runs on one feature earlier only when a concrete finding calls for it. Findings go to `progress.md` and the report as needs-human items. Features can pass alone and still fail together.
 
 ## Components
 

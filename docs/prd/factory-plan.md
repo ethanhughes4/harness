@@ -1,6 +1,6 @@
 # Factory: build plan
 
-Decisions: docs/prd/factory-decisions.md (D58–D79), on top of
+Decisions: docs/prd/factory-decisions.md (D58–D79, D107–D111), on top of
 docs/prd/harness-decisions.md (D1–D57).
 Tests for this repo: `python -m pytest -q` at the repo root.
 
@@ -19,7 +19,9 @@ Tests for this repo: `python -m pytest -q` at the repo root.
 ## Shared formats
 
 - `factory.json`:
-  `{"reviewers": [{"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false}]}`
+  `{"reviewers": [{"name": "code", "agent": "harness:reviewer", "when": "always", "browser": false, "batch": true}]}`
+  where `when` is `always`, `ui`, `high_risk` or `milestone` and `batch` is
+  optional (D109, D111)
 - `.claude/harness.json` new keys, all optional, with these defaults in
   `scripts/common.py`: `max_builders` 2, `gates` `[]`,
   `risky` (the D63 default globs), `acceptance_dir` `"tests/acceptance"`,
@@ -180,3 +182,12 @@ D72 s1 · D73 s8 · D74 s8 · D75 s9 · D76 s6 · D77 s7 · D78 s8 · D79 s4,10
 
 None. The proof run (a 15–20 feature app built end to end) is billed
 and long, so it follows this plan rather than being a step in it.
+
+## Review cost and safety (D107-D111). Status: DONE
+
+- `scripts/init_features.py` and its guard rule: the only way to add features (D107).
+- `scripts/merge.py`: the only merge, refuses high risk (D108).
+- `factory.json`: `batch` on `code`, `security` `high_risk`, `user` and `visual` `milestone` (D109, D111).
+- `agents/organiser.md`, `agents/reviewer.md`: batch review, targeted rework, milestone-only browser reviews.
+- `scripts/build.py`: session override first, failed sessions stop the build (D110).
+- Tests: `test_init_features.py`, `test_merge.py`, `test_build.py`, `test_factory.py`, `test_guard.py`.

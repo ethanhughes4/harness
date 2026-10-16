@@ -1,0 +1,7 @@
+# Release ZIP: git archive --format=zip -o harness.zip HEAD  (these paths stay out of it)
+.claude/agent-memory export-ignore
+.claude/worktrees export-ignore
+__pycache__ export-ignore
+*.pyc export-ignore
+.pytest_cache export-ignore
+init-features-candidate.tmp export-ignore

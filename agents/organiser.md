@@ -29,7 +29,8 @@ Files: `feature_list.json`, `docs/spec.md`, `docs/decisions.md`,
 `docs/owner.md`, `progress.md`, CLAUDE.md. Read them with Read. A hook
 blocks any Bash command that names `feature_list.json`, except the exact
 call `python <plugin_root>/scripts/status.py <id> <status>` (or
-mark_pass.py). So never name that file in Bash (no grep, sed, cat or
+mark_pass.py). It also blocks you from `init_features.py`: you cannot
+add features, only the owner's interactive session can. So never name that file in Bash (no grep, sed, cat or
 python -c on it, and not in a commit message); count and list features
 with Read. You change a feature's `status` only with status.py. Statuses:
 todo, building, review, rework, needs-human, done. A feature with no
@@ -89,39 +90,68 @@ Run one job per picked feature, all in the same message where you can
    `{"risk": "low"|"high", "files": [...]}`, where `files` lists only
    the changed files that matched a `risky` glob (empty means low risk). Never let the builder say
    what the risk is.
-6. Review. Status `review`. Create `.harness/jobs/<id>/round-<n>/`. For
-   each reviewer in `factory.json`, run it if its `when` is `always`; or
-   `ui` and the feature has `"ui": true`; or `high_risk` and risk is
-   high. Give each the feature id, the job folder and the round. It
-   writes `.harness/jobs/<id>/round-<n>/review-<name>.md` (its `name`
-   from `factory.json`), whose first line is `VERDICT: PASS` or
-   `VERDICT: CHANGES`. Reviewers with `browser: true` of one job run one
-   after the other (one browser at a time); the others run in parallel
-   with them. WAIT FOR ALL: the round is done only when every review file
-   it needs exists. If one is missing, ask that reviewer again; never
-   write a review yourself. Read each file. Any CHANGES goes to Rework.
-7. Merge or stop. All PASS and gates green:
-   - risk low or high: `git merge --no-ff factory/<id>` on the main branch, then
-     run every `test` command (one at a time). Green: status done,
-     `git add -A` and `git commit` (the merge commit already exists;
-     commit the job files and the status), then
-     `git worktree remove .harness/wt/<id>`. Red: `git reset --hard
-     <the commit before the merge>` and treat it as Rework with the
-     test output as the findings. Conflict in a shared list where each
-     side added a line: keep every line. Any other conflict:
-     `git merge --abort` and Rework.
-   - If risk was high, also write in `decision.md`: "High risk, merged
-     automatically after all reviewers passed. Risky files: <files>",
-     so the owner can check it later in the report.
+6. Review. Wait here until EVERY picked job has finished its gates
+   (green, or sent to Rework and green again) and its risk is known;
+   never start a reviewer while any picked job is still building or in
+   its gates. Then set each ready job to status `review` and create its
+   `.harness/jobs/<id>/round-<n>/`. For each reviewer in `factory.json`
+   a job needs it when its `when` is `always`; or `ui` and the feature
+   has `"ui": true`; or `high_risk` and risk is high. A `milestone`
+   reviewer is never part of a feature's review (see Milestone
+   walkthrough), except when a concrete finding calls for it: a gate,
+   test or code-review finding about what the user sees, or a high-risk
+   `"ui": true` feature. Then run it in feature mode for that job only
+   and record why in `decision.md`.
+   - A reviewer with `"batch": true` runs ONCE for all the jobs that need
+     it: one Agent call, given the list of `<id> round <n>` pairs (the
+     rounds can differ). It reads the shared project files once, then
+     judges each job on its own and writes one file per job,
+     `.harness/jobs/<id>/round-<n>/review-<name>.md`. There is no shared
+     verdict: each file's first line is that job's `VERDICT: PASS` or
+     `VERDICT: CHANGES`, and its findings name that job's feature, file
+     and requirement. The reply lists one verdict per job.
+   - Any other reviewer runs once per job, given the feature id, the job
+     folder and the round. Reviewers with `browser: true` run one after
+     the other (one browser at a time); the others run in parallel.
+   - WAIT FOR ALL: the round is done only when every review file each
+     job needs exists. If one is missing, ask that reviewer again (for
+     the missing jobs only); never write a review yourself. Read each
+     file. A job with any CHANGES goes to Rework alone; the jobs whose
+     files are all PASS go on to Merge now.
+7. Merge or stop, one job at a time, only with
+   `python <plugin_root>/scripts/merge.py <id> <round>`. Never run
+   `git merge` yourself: the hook blocks it. The script checks the
+   gates file and every review file of that round, then:
+   - Exit 0, merged: low risk, tests green, status done. `git add -A`
+     and `git commit` the job files and the status, then
+     `git worktree remove .harness/wt/<id>`.
+   - Exit 3, high risk: NOT merged and never merged by you. The script
+     set status `needs-human` and wrote the reason in `decision.md`. A
+     high-risk job needs a passing security review first (the script
+     returns 2 until it exists); passing reviews never change this.
+     Keep the branch and the worktree. Commit the job files.
+   - Exit 2, not ready: print says what is missing; fix that (run the
+     missing review, or Rework).
+   - Exit 4, conflict (already aborted): Rework, with the conflict as
+     the findings; the builder merges the main branch into its job
+     branch.
+   - Exit 5, tests red (merge already undone): Rework, with the printed
+     test output as the findings.
+   Merge each job only after it has its own PASS files; a job that
+   still needs rework never holds back the others.
 
 ## Rework
 
 At most 2 rework rounds per job.
+Only the jobs that need changes are reworked; a job that passed is
+never built or reviewed again. After the rework, the job goes through
+Gates, Risk and Review again as the next round number, and the jobs
+that are ready at the same time share one batch review.
 - Round 1: `SendMessage` to `builder-<id>` with the findings (the gates
   file, or the review files, or the test output), the folder it works
   in, and "think harder". It keeps its history. Set status `rework`
   while you wait, then back to `review`. Run Gates again as round 2 (the
-  next number), then Risk and Review again.
+  next number), then Risk and Review again for this job.
 - Round 2: start a fresh `harness:builder` with `model: opus` and
   `name: builder-<id>-2` on the same branch and worktree, with the
   findings written out.
@@ -155,19 +185,23 @@ resolver does not agree, send the builder the resolver's answer.
 ## Job files
 
 `decision.md` in the job folder: one short entry per decision (round
-count, risk and files, merged or needs-human, why). Commit `.harness/jobs/`
+count, risk and files, merged or needs-human, why). A high-risk job's
+entry also holds the risk, the review findings and the reason it waits
+for the owner (merge.py writes the first lines; add the findings). Commit `.harness/jobs/`
 with the job. `.harness/wt/` is git-ignored.
 
 ## Milestone walkthrough
 
-Count the features you merged this session that have `"ui": true`, plus
-those already done since the last walkthrough entry in `progress.md`.
-When that count reaches `walkthrough_every`, and once when nothing is
-left to build, run every reviewer in `factory.json` with `browser: true`
-in whole-app mode on the main branch (one at a time, writing to
-`.harness/jobs/walkthrough/round-<n>/review-<name>.md`). If there are no
-such reviewers, skip this. Put the findings in `progress.md` as
-needs-human items.
+The expensive AI browser reviews (`when: "milestone"`: `user` and
+`visual`) run on the whole app, not on each feature. Count the features
+you merged this session that have `"ui": true`, plus those already done
+since the last walkthrough entry in `progress.md`. When that count
+reaches `walkthrough_every`, and once when nothing is left to build (the
+final walkthrough), run every `milestone` reviewer in `factory.json` in
+whole-app mode on the main branch (one at a time, writing to
+`.harness/jobs/walkthrough/round-<n>/review-<name>.md`). If there are
+none, skip this. Put the findings in `progress.md` as needs-human items.
+Feature-level acceptance tests and gates still run on every feature.
 
 ## End
 

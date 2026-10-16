@@ -54,7 +54,9 @@ consequence not size)
 
 D64: Reviewers are listed in the plugin's `factory.json` (the shared
 list): each entry has `name`, `agent`, `when` (`always`, `ui` or
-`high_risk`) and `browser` (true or false). Each writes only
+`high_risk` or `milestone`), `browser` (true or false) and optional
+`batch` (true or false, default false; never with `browser: true`; D109).
+Each writes only
 `.harness/jobs/<id>/round-<n>/review-<name>.md`, whose first line is
 `VERDICT: PASS` or `VERDICT: CHANGES`; the guard enforces the file
 ownership by agent type (D56). A blocking finding must cite a failing
@@ -64,10 +66,10 @@ CHANGES. (reason: precision-first review; research)
 D65: The reviewers: `code` (`harness:reviewer`, opus, always: diff
 against spec, decisions and architecture, then correctness); `security`
 (`harness:security`, opus, high_risk); `user` (`harness:user-tester`,
-sonnet, ui, browser: starts the app and uses it in a browser like a
+sonnet, milestone, browser (D111): starts the app and uses it in a browser like a
 person, following the feature's steps plus obvious wrong inputs and
 console errors, with screenshots); `visual` (`harness:visual`, sonnet,
-ui, browser: screenshots at 1280 px and 390 px wide, light and dark,
+milestone, browser (D111): screenshots at 1280 px and 390 px wide, light and dark,
 against `docs/design/` and the tokens, plus an axe accessibility scan;
 blocks only on broken layout, overflow, wrong tokens, failed contrast,
 missing focus or loading states, or a clear mockup mismatch; taste is a
@@ -76,14 +78,18 @@ note). (reason: owner; Anthropic, Replit and Factory test like a user)
 D66: WAIT FOR ALL: a round is done only when every review file the
 round needs exists. Browser reviewers of a job run one after the other
 (one browser at a time on 8 GB); the others run in parallel with them.
-Any CHANGES → rework. Still CHANGES or red gates after round 2's
+Reviewers marked `batch` run once for the jobs that are ready together
+(D109). Any CHANGES → rework. Still CHANGES or red gates after round 2's
 rework → `needs-human`. (reason: owner; research: gains end by round 2–3)
 
 D67: Merge: low risk and every review PASS → the organiser merges
 `factory/<id>` into the main branch with `--no-ff`, runs every `test`
 command; green → status done, commit, remove the worktree; red → reset
 to before the merge and treat it as a rework round. High risk → status
-`needs-human`, branch kept. No AI approver. (reason: LLM judges are
+`needs-human`, branch kept, never merged by the organiser: a successful
+review, security included, does not change that. This is enforced in
+`scripts/merge.py`, the only way the organiser may merge (D108). No AI
+approver. (reason: LLM judges are
 unstable; owner keeps the risky merges)
 
 D68: `feature_list.json` gains a `status` field: `todo`, `building`,
@@ -110,8 +116,8 @@ research: fresh sessions beat one long one; a script, not a judge,
 decides "done"; replaces D20, D23, D26's single /goal session)
 
 D70: Every `walkthrough_every` merged UI features (default 5), and once
-when nothing is left to build, the organiser runs each `browser`
-reviewer in whole-app mode on the main branch. Findings go to
+when nothing is left to build (the final walkthrough), the organiser runs
+each `milestone` reviewer in whole-app mode on the main branch. Findings go to
 `progress.md` and to the report as needs-human items. (reason: Factory
 validates per milestone; features can pass alone and fail together)
 
@@ -375,3 +381,59 @@ image. Premium sites such as Mercury pin sections and animate them in on
 scroll, so a full-page screenshot showed only the hero and a background
 image; per-screen captures show the real product UI. (live check
 2026-10-15 on mercury.com and linear.app)
+
+## Review cost and safety, 2026-10-16
+
+D107: Adding features goes through `scripts/init_features.py --check|--apply
+init-features-candidate.tmp`. Cause of the first-run blocker: init-build told
+Claude to write `feature_list.json` while the guard (D17, D68) blocks every
+Write, Edit and Bash on it, and status.py / mark_pass.py only edit existing
+records. The script validates a candidate list of NEW features (valid JSON,
+required fields of the existing schema, unique ids, known dependencies, no
+self-dependency or cycle, status `todo`, passes false), never changes an
+existing feature, and `--apply` replaces the file atomically; `--check`
+changes nothing. The candidate must be named `init-features-candidate.tmp` in
+the project root. The guard allows the exact command only when the hook input
+has no `agent_type`: PreToolUse input carries it for subagents and `--agent`
+sessions (D56), so the interactive init-build session can run it and the
+builder, reviewers, organiser and every other subagent cannot. Direct Write
+and Edit stay blocked for everyone. (reason: a narrow door instead of
+loosening the lock; acceptance criteria must not be rewritable by builders)
+
+D108: `scripts/merge.py <id> <round>` is the one place a job merges. It
+requires `gates-<round>.md` PASS and every review the job needs (from
+`factory.json`: `always`, `high_risk` when risk.py says high, `ui` for a UI
+feature) to be `VERDICT: PASS`, and no CHANGES file in the round. A high-risk
+job is then NOT merged: status `needs-human`, the reason and risky files in
+`decision.md`, branch and worktree kept; it waits for `/harness:approve`
+(D76). A low-risk job is merged `--no-ff`, tests run, red undoes the merge with
+`reset --keep` (uncommitted job files survive), green sets `done`. The guard
+blocks `git merge` from the organiser. This fixes the organiser prompt that said
+a high-risk job was merged automatically, against D67.
+
+D109: Batch review. The organiser builds up to `max_builders` jobs (concurrency
+unchanged), runs the gates and risk for each, and only when every picked job is
+past its gates runs a `batch: true` reviewer (the `code` reviewer) once for all
+of them, in one call. That reviewer reads the shared project files once, then
+judges each job alone and writes one `round-<n>/review-code.md` per job, each
+with its own VERDICT line. There is never a shared verdict. Jobs with PASS merge
+through merge.py at once; only the jobs with CHANGES are reworked, get new gates
+and risk, and are reviewed again (together if they are ready together). Reviewers
+without `batch` run per job as before. (reason: the opus reviewer reread the same
+spec, decisions and rules for every feature)
+
+D110: build.py reads `--session-cmd` before it runs `claude plugin list`, so a
+stubbed session never needs Claude Code installed. A session that exits nonzero
+or cannot start stops the build with exit 1, a message on stderr and the status
+line; its output stays in build-log.jsonl. It is not counted as an idle session.
+Completed builds and two idle sessions in a row end as before, exit 0.
+
+D111: Milestone UI review. `user` and `visual` have `when: "milestone"`: they
+no longer run for each UI feature. Feature-level acceptance tests (with
+Playwright flows), gates and the code review still run on every feature. The
+whole-app walkthrough (D70) runs them every `walkthrough_every` merged UI
+features (default 5) and once at the end. The organiser may run a milestone
+reviewer on one feature earlier when a gate, test or code-review finding is
+about what the user sees, or a UI feature is high risk, and records why in
+`decision.md`. (reason: the same screens were reviewed twice by two sonnet
+browser agents)

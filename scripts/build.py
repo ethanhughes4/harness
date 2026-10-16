@@ -2,7 +2,8 @@
 
 Starts a fresh organiser session while a feature is ready; stops when none is, or after two
 sessions in a row leave feature_list.json unchanged. --session-cmd replaces the whole `claude`
-command (tests stub it); it must be the last argument.
+command (tests stub it; `claude` is then never run); it must be the last argument. A session that
+exits nonzero or cannot start stops the build with exit 1; its output stays in build-log.jsonl.
 """
 import json
 import os
@@ -48,13 +49,14 @@ def status_line(features):
 
 def main(argv):
     cfg = config(os.getcwd())
-    listed = subprocess.run(["claude", "plugin", "list"], capture_output=True, text=True, errors="replace")
-    cmd = with_plugin_dir(CLAUDE, listed.stdout or "", (cfg or {}).get("plugin_root"))
     if "--session-cmd" in argv:
         cmd = argv[argv.index("--session-cmd") + 1:]
         if not cmd:
             print("usage: build.py [--session-cmd CMD ARGS...]", file=sys.stderr)
             return 1
+    else:
+        listed = subprocess.run(["claude", "plugin", "list"], capture_output=True, text=True, errors="replace")
+        cmd = with_plugin_dir(CLAUDE, listed.stdout or "", (cfg or {}).get("plugin_root"))
     limit = setting(cfg, "max_builders")
     idle = 0
     while True:
@@ -63,7 +65,13 @@ def main(argv):
             break
         before = json.dumps(features, sort_keys=True)
         with open("build-log.jsonl", "ab") as log:  # streamed, so a killed session keeps its log
-            subprocess.run(cmd, stdout=log)
+            try:
+                code = subprocess.run(cmd, stdout=log).returncode
+            except OSError as e:
+                code = f"could not start: {e}"
+        if code != 0:
+            print(f"session failed ({code}); see build-log.jsonl. {status_line(load())}", file=sys.stderr, flush=True)
+            return 1
         features = load()
         idle = idle + 1 if json.dumps(features, sort_keys=True) == before else 0
         print(status_line(features), flush=True)

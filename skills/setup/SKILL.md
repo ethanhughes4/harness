@@ -87,7 +87,9 @@ then show the one-screen summary (see Finishing).
          "Bash(python <PLUGIN_ROOT>/scripts/risk.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/design_audit.py *)",
          "Bash(python <PLUGIN_ROOT>/scripts/reference_capture.py *)",
-         "Bash(python <PLUGIN_ROOT>/scripts/build.py*)"
+         "Bash(python <PLUGIN_ROOT>/scripts/build.py*)",
+         "Bash(python <PLUGIN_ROOT>/scripts/merge.py *)",
+         "Bash(python <PLUGIN_ROOT>/scripts/init_features.py *)"
        ],
        "deny": ["Bash(git push*)"]
      },
@@ -118,7 +120,8 @@ then show the one-screen summary (see Finishing).
 3. `CLAUDE.md`: under 60 lines. The project's purpose from the brief,
    the stack, how to run the tests, the layout, and the must-nevers from
    docs/brief.md. Say that `feature_list.json` is changed only by
-   `python <PLUGIN_ROOT>/scripts/mark_pass.py <id>`.
+   `python <PLUGIN_ROOT>/scripts/mark_pass.py <id>`, `status.py`, and
+   (new features, interactive session only) `init_features.py`.
 
 4. Rule files in `.claude/rules/`, one per topic the stack needs
    (e.g. testing, style). Short, concrete, no more than 30 lines each.
