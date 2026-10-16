@@ -1,88 +1,158 @@
 # Harness
 
-A Claude Code plugin that turns an idea into a built, tested project: an intake interview, a spec, a
-feature list, and a guarded build loop (test writer, builder, gates, reviewers, merge). Design: `docs/design.md`.
-Decisions: `docs/prd/factory-decisions.md`.
+**An AI-powered software development harness for Claude Code.**
 
-## Requirements
+Harness helps you turn an idea into a working software application by automating the planning, building, testing, and review process.
 
-- Claude Code (recent enough for plugins, `--agent` and `--permission-prompts none`), Python 3.10+, git.
-- UI projects: Playwright with Chromium (setup offers to install it).
+Instead of asking Claude to build an entire application in one go, Harness breaks the work into manageable features, builds them systematically, checks the results, and tracks progress along the way.
 
-## Install
+## What Does Harness Do?
 
-Run Claude Code with the plugin folder: `claude --plugin-dir <this folder>`. To install it permanently, add this
-folder as a plugin marketplace/plugin with your Claude Code version's `claude plugin` commands (see its docs).
-`build.py` adds `--plugin-dir` itself when the plugin is not installed and `plugin_root` is set in
-`.claude/harness.json`.
+Harness coordinates the software development process from the initial idea through to a completed application.
 
-## Use it on a project
+- **Project planning:** Turns your idea into requirements, technical decisions, and a structured feature list.
+- **Feature development:** Breaks the application into smaller features and builds them in a controlled order.
+- **Automated testing:** Runs the configured tests and checks as features are developed.
+- **Code review:** Reviews implementations against requirements and identifies problems that need fixing.
+- **Security checks:** Applies additional scrutiny to high-risk features such as authentication, payments, and database changes.
+- **UI and UX reviews:** Checks the application's user experience and visual design at milestones.
+- **Automatic rework:** Sends features back for corrections when tests or reviews identify problems.
+- **Progress tracking:** Records completed features, outstanding work, decisions, and review results.
+- **Controlled merging:** Integrates approved, low-risk features while keeping high-risk changes available for human approval.
 
-In the project folder (a git repo), open Claude Code, accept the folder trust prompt once, then:
+## How It Works
 
-| Step | Command | Result |
-| --- | --- | --- |
-| 1 | `/harness:new "<idea>"` | Questions, spec, `/harness:setup`, then `/harness:init-build` |
-| 2 | `build.cmd` (runs `python <plugin_root>/scripts/build.py`) | Headless build sessions until done or stuck |
-| 3 | `/harness:report`, `/harness:approve <id>`, `/harness:rework <id> <note>` | Settle `needs-human` jobs |
+Harness follows a structured development workflow.
 
-### Creating the feature list
+1. **Define the project** — Describe what you want to build and clarify the requirements.
+2. **Plan the application** — Establish the architecture, design direction, development stages, and feature list.
+3. **Prepare the project** — Set up the required project files, instructions, and testing configuration.
+4. **Build the features** — Claude develops features in separate branches, respecting dependencies and the configured concurrency limit.
+5. **Run automated checks** — Each feature is tested before moving forward.
+6. **Review the code** — The code reviewer examines completed work. High-risk features receive additional security review.
+7. **Fix any problems** — Features that fail checks or reviews are sent back for targeted corrections.
+8. **Review the application** — UI projects receive user-experience and visual reviews at configured milestones and at the end.
+9. **Integrate completed work** — Features that pass the required checks are merged according to the project's risk and approval rules.
+10. **Track the results** — Progress and outstanding issues remain recorded so development can continue across sessions.
 
-`feature_list.json` can't be written directly (a hook blocks Write, Edit and Bash on it). `/harness:init-build`:
+## Batch Processing and Token Efficiency
 
-1. **Propose**: writes only the new features to `init-features-candidate.tmp` in the project root.
-2. **Validate**: `python <plugin_root>/scripts/init_features.py --check init-features-candidate.tmp` (changes nothing).
-3. **Approve**: shows you each id, title and dependency; you say what to change.
-4. **Apply**: the same command with `--apply` (validates again, replaces the file atomically).
-5. **Verify**: reads `feature_list.json` back.
+Harness is designed to reduce unnecessary AI usage while maintaining a structured development and review process.
 
-This works only from the interactive session; subagents (builder, reviewers, organiser) are refused. Existing
-features are never changed, ids must be unique, dependencies must exist, and new features start `todo` / `passes: false`.
+Rather than launching a separate AI reviewer for every feature, Harness groups compatible work together and reuses review context where possible.
 
-## Configuration
+### How Batching Works
 
-- `.claude/harness.json` (written by `/harness:setup`): `test`, `plugin_root`, and optional `max_builders` (2), `gates`,
-  `risky`, `acceptance_dir`, `walkthrough_every` (5), `run`, `test_limit_s` (300), `protected`.
-- `factory.json` (in the plugin): the reviewers. Each has `name`, `agent`, `when` (`always`, `ui`, `high_risk`,
-  `milestone`), `browser` and optional `batch`.
-  - `code` runs on every feature, **batched**: one call reviews all the features built together, one verdict file each.
-  - `security` runs only on **high-risk** features (files matching `risky`).
-  - `user` and `visual` run at **milestones** (every `walkthrough_every` UI features, and once at the end), on the whole app.
+1. **Build multiple features:** Harness selects features whose dependencies are satisfied and processes them within the configured concurrency limit.
+2. **Check each feature individually:** Every feature still runs its own acceptance tests, automated checks, and risk classification.
+3. **Review the batch together:** Once the selected features have passed their required checks, the code reviewer reviews the group in a single invocation rather than starting a separate reviewer for every feature.
+4. **Keep results independent:** Each feature receives its own review report and verdict. One feature can pass while another requires changes.
+5. **Fix only what needs fixing:** Features that fail review are sent back for targeted rework. Features that have already passed do not need to be reviewed again simply because another feature failed.
 
-High-risk features are never merged automatically: after the reviews pass they become `needs-human` with the
-branch kept, and you merge with `/harness:approve <id>`.
+### Additional Review Optimisation
 
-## Tests
+Harness also avoids running expensive specialised reviews unnecessarily:
 
+- **Security reviews:** Reserved for high-risk features, such as authentication, payments, secrets, and sensitive database changes.
+- **User-experience and visual reviews:** Run at configured milestones and at the end of the build, rather than automatically launching both AI reviewers for every UI feature.
+- **Automated checks:** Continue to run on individual features, ensuring that batching reviews does not mean skipping tests.
+
+### Why This Matters
+
+Every unnecessary AI invocation can introduce additional token usage and cost. By batching code reviews, reusing shared context, and running specialised reviews only when appropriate, Harness aims to make larger development projects more efficient.
+
+Batching does not eliminate the need for independent feature verdicts, targeted fixes, or final application checks. It reduces duplicated review effort while preserving the safeguards that make the development process reliable.
+
+Actual savings depend on the size and complexity of the application, the amount of shared context, and how many features require rework.
+
+## Getting Started
+
+Harness runs as a plugin for [Claude Code](https://code.claude.com/).
+
+### Prerequisites
+
+- Claude Code
+- Python 3.10 or later
+- Git
+- A project directory for the application you want to build
+
+Browser-based UI testing may also require Playwright and Chromium, depending on the project configuration.
+
+### 1. Start Claude Code with Harness
+
+Open the project you want to work on and load the Harness plugin:
+
+```bash
+claude --plugin-dir "/path/to/harness"
 ```
-python -m pytest -q
+
+Replace `/path/to/harness` with the actual location of your Harness installation.
+
+### 2. Start a Project
+
+Describe the application you want to create:
+
+```text
+/harness:new "Describe your application idea here"
 ```
 
-The suite takes a few minutes (many tests start Python subprocesses). The design-audit tests use Playwright and Chromium; if they are missing, expect those tests to fail for
-that reason (all 92 tests passed on the machine used for this change).
-`/harness:smoke` runs the real line end to end on a mini project; it needs Claude Code and is billed.
+Follow the prompts to establish the requirements, review the proposed plan, and prepare the project for development.
 
-## Release ZIP
+### 3. Build the Application
 
-`git archive --worktree-attributes --format=zip -o harness.zip HEAD` follows `.gitattributes`, which leaves out
-agent memory, caches and compiled Python. `.git` is never included.
+Once initialisation is complete, run the build script from the project directory:
 
-## Common errors
+```bash
+build.cmd
+```
 
-| Message | Cause and fix |
+Harness works through the planned features, runs the configured checks, and records progress.
+
+The build can be resumed in a later session using the same project state.
+
+## Useful Commands
+
+| Command | Purpose |
 | --- | --- |
-| `Blocked: feature_list.json and protected paths can't be changed directly` | Use `init_features.py`, `status.py` or `mark_pass.py`; never Write or Edit the list |
-| `Feature validation failed: ...` | Fix `init-features-candidate.tmp` as the message says, run `--check` again |
-| `Candidate must be the designated project-root file` | The candidate must be `init-features-candidate.tmp` in the folder you run it from |
-| `session failed (N); see build-log.jsonl` | A build session exited with an error; read the end of `build-log.jsonl`, fix, rerun `build.cmd` (it resumes) |
-| Jobs sit at `needs-human` | High risk, or still failing after two rework rounds: `/harness:report`, then approve or rework |
-| Permission denials in `build-log.jsonl` | `python scripts/check_log.py build-log.jsonl`; add the missing `Bash(...)` rule in `.claude/settings.json` |
+| `/harness:new` | Start a project or plan additional features. |
+| `/harness:report` | Review development progress and outstanding issues. |
+| `/harness:rework <id> <note>` | Request changes to a feature. |
+| `/harness:approve <id>` | Review and approve a high-risk feature held for human approval. |
+| `/harness:smoke` | Run an end-to-end smoke test of the Harness workflow. |
 
-## Limits
+The main build process is started using `build.cmd`.
 
-- Review is not proof; tests, gates, the risk rule and the needs-human list are the safety net.
-- Hooks apply only when `.claude/harness.json` exists. The init and merge rules rely on the hook input's
-  `agent_type`, which Claude Code sets for subagents and `--agent` sessions (D56).
-- Deployment and pushing are out of scope: `git push` is denied.
-- The batch review, milestone walkthrough and high-risk parking are covered by script tests and prompt text; the
-  full multi-agent line has not been run end to end in this repo's tests.
+## Safety and Human Oversight
+
+Harness automates much of the repetitive development work while retaining safeguards around important decisions.
+
+- Low-risk features can be merged automatically after passing their required checks and reviews.
+- High-risk features are held for human approval and are not automatically merged.
+- Acceptance tests and configured automated checks remain part of the development process.
+- Failed reviews trigger targeted corrections rather than requiring the entire project to be rebuilt.
+- Changes are developed on separate branches to help isolate work and control integration.
+
+Harness does not guarantee that generated software is bug-free or secure. The finished application should still be reviewed and tested before production use.
+
+## Design Principles
+
+Harness is built around a few core principles:
+
+- **Small, manageable changes:** Build applications feature by feature.
+- **Test continuously:** Identify problems before they spread through the application.
+- **Use specialised agents:** Give planning, development, and review distinct responsibilities.
+- **Minimise unnecessary work:** Batch compatible reviews and avoid repeating expensive checks without a reason.
+- **Preserve project state:** Record progress so work can continue across sessions.
+- **Keep humans in control:** Escalate high-risk changes rather than merging them automatically.
+
+## Limitations
+
+Harness relies on Claude Code, the quality of the project requirements, and the checks configured for each application.
+
+AI agents may still make mistakes, tests may not cover every scenario, and browser-based reviews can incur additional usage costs. Token consumption varies according to project size, feature complexity, review requirements, and the amount of rework needed.
+
+Harness assists with building and reviewing software; deployment, production configuration, and final release decisions remain separate responsibilities.
+
+## License
+
+See the repository's license file for licensing information.
